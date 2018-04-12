@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>{% block title %}{% endblock %} - Noggin.</title>
+    <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="{{ url_for('theme.static', filename='favicon.ico')}}"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="bg-secondary">
+    <div class="bg-dark">
+    <div class="container">
+    <nav class="navbar navbar-dark justify-content-between px-0">
+        <a href="{{ url_for('index') }}">
+            <img height=40px src="{{ url_for('theme.static', filename='noggin_logo.png') }}" alt="Noggin Logo" />
+        </a>
+        {% if g.fas_user %}
+        <div class="dropdown">
+            <a class="dropdown-toggle nav-link" data-toggle="dropdown" id="dropdownMenu2" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                <img src="https://seccdn.libravatar.org/avatar/de5bf8d06663adb3bb1b8d49ccab259828fad7dddeb233b073d0c447d79b4c14?s=24&d=retro"/>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu2" style="right:0;left:auto;">
+                <div class="dropdown-header">
+                    <strong>{{ g.fas_user.username }}</strong>
+                </div>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{{ url_for('logout') }}?next={{ request.url }}">Log Out</a>
+            </div>
+        </div>
+        {% else %}
+        <a class="btn btn-success my-2 my-sm-0" href="{{ url_for('login') }}?next={{ request.url }}">Log In</a>
+        {% endif %}
+    </nav>
+    </div>
+    </div>
+
+    <div class="bg-white">
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+    </div>
+    <div class="bg-secondary">
+    <div class="container text-center text-white py-5">
+        &copy; 2018 Noggin Noggin Noggin. Powered by <a class="text-white" href="https://pagure.io/noggin">Noggin.</a>
+    </div>
+    </div>
+
+    {% block jscripts %}
+    <script
+			  src="https://code.jquery.com/jquery-3.3.1.min.js"
+			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			  crossorigin="anonymous"></script>
+    <script type="text/javascript"
+        src="https://apps.fedoraproject.org/global/fedora-bootstrap-1.1.1/fedora-bootstrap.min.js">
+    </script>
+    {% endblock %}
+
+</body>
+</html>
