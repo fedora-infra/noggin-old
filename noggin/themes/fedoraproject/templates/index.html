@@ -2,6 +2,20 @@
 
 {% block content %}
 
-Noggin Account System
+{% extends "master.html" %}
+
+{% block content %}
+<div class="py-5">
+        <div class="jumbotron bg-white">
+                <h1 class="display-4">Fedora Accounts</h1>
+                <p class="lead">This is a simple noggin noggin. Noggin is best used to login. Always loggin with noggin.</p>
+                <hr class="my-4">
+                <p class="lead">
+                  <a class="btn btn-secondary btn-lg" href="{{ url_for('create_account') }}" role="button">Create Account</a>
+                  <a class="btn btn-primary btn-lg" href="{{ url_for('login') }}" role="button">Log In</a>
+                </p>
+              </div>
+</div>
+{% endblock %}
 
 {% endblock %}
