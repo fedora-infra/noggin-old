@@ -11,6 +11,8 @@ from functools import wraps
 import flask
 from flask.ext.fas_openid import FAS
 
+import nogginmockapi
+
 __version__ = '0.0.1'
 
 APP = flask.Flask(__name__)
@@ -67,6 +69,30 @@ def index():
 
     return flask.render_template(
         'index.html',
+    )
+
+@APP.route('/users')
+def users():
+    ''' Display the user list page. '''
+
+    searchterm = flask.request.args.get('searchterm', None)
+
+    users = nogginmockapi.get_users(searchterm=searchterm)
+
+    return flask.render_template(
+        'users.html',
+        users=users,
+    )
+
+@APP.route('/users/<username>')
+def userdetail(username=None):
+    ''' Display the user detail page. '''
+
+    user = nogginmockapi.get_user(username=username)
+
+    return flask.render_template(
+        'user.html',
+        user=user,
     )
 
 @APP.route('/login', methods=['GET', 'POST'])

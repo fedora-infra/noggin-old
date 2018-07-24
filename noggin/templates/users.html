@@ -1,0 +1,12 @@
+{% extends "master.html" %}
+
+{% block content %}
+<div class="row py-4 justify-content-center">
+    <div class="col-6">
+        <h3><strong>Create Account</strong></h3>
+    {% for user in users %}
+        <div>{{user['name']}}</div>
+    {% endfor %}
+    </div>
+</div>
+{% endblock %}
