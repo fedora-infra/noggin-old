@@ -1,3 +1,2 @@
 *.pyc
-Vagrantfile
-.vagrant
+__pycache__
