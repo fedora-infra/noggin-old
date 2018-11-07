@@ -31,12 +31,15 @@ services:
     hostname: util.noggindev.local
     links:
     - "ipa:ipa.noggindev.local"
+    - "ipsilon:ipsilon.noggindev.local"
+    - "caiapi:caiapi.noggindev.local"
+    - "noggin:noggin.noggindev.local"
   ipsilon:
     build:
       context: ./devel
       dockerfile: Dockerfile.ipsilon
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/"]
+      test: ["CMD", "curl", "-f", "https://ipsilon.noggindev.local/"]
       interval: 10s
       timeout: 10s
       retries: 3
@@ -50,7 +53,7 @@ services:
       context: ./devel
       dockerfile: Dockerfile.CAIAPI
     healthcheck:
-      test: ["CMD", "curl", "-kf", "https://localhost/"]
+      test: ["CMD", "curl", "-f", "https://caiapi.noggindev.local/"]
       interval: 10s
       timeout: 10s
       retries: 3
@@ -61,14 +64,12 @@ services:
     links:
     - "ipsilon:ipsilon.noggindev.local"
     - "ipa:ipa.noggindev.local"
-    depends_on:
-    - "util"
   noggin:
     build:
       context: ./devel
       dockerfile: Dockerfile.noggin
     healthcheck:
-      test: ["CMD", "curl", "-kf", "https://localhost/"]
+      test: ["CMD", "curl", "-f", "https://noggin.noggindev.local/"]
       interval: 10s
       timeout: 10s
       retries: 3
@@ -78,12 +79,8 @@ services:
     hostname: noggin.noggindev.local
     links:
     - "ipsilon:ipsilon.noggindev.local"
-    - "ipa:ipa.noggindev.local"
     - "caiapi:caiapi.noggindev.local"
-    depends_on:
-    - "util"
-    - "caiapi"
-    - "ipsilon"
+    - "ipa:ipa.noggindev.local"
 volumes:
   ipa-data:
   ipsilon-data:

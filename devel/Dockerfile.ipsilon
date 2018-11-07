@@ -1,6 +1,8 @@
 FROM fedora
 VOLUME /data
 ENTRYPOINT /usr/local/bin/ipsilon-run
+EXPOSE 80/tcp
+EXPOSE 443/tcp
 RUN dnf install -y ipsilon ipsilon-openidc ipsilon-authldap
 COPY common/ipa-cert-install /usr/local/bin/ipa-cert-install
 COPY ipsilon/run /usr/local/bin/ipsilon-run
