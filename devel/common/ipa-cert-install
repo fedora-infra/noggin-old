@@ -1,0 +1,8 @@
+#!/bin/bash -e
+echo "Installing IPA certificate..."
+until (curl -qf http://ipa.noggindev.local/ipa/config/ca.crt -o /etc/pki/ca-trust/source/anchors/ipa.crt >dev/null 2>&1)
+do
+	echo "Waiting for IPA to start..."
+	sleep 10
+done
+update-ca-trust

@@ -1,0 +1,8 @@
+FROM fedora
+RUN mkdir /data
+VOLUME /data/ipsilon
+VOLUME /data/caiapi-noggin
+ENTRYPOINT /usr/local/bin/util-run
+RUN dnf install -y freeipa-client less
+COPY common/ipa-cert-install /usr/local/bin/ipa-cert-install
+COPY util/run /usr/local/bin/util-run

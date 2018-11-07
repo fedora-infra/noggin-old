@@ -1,0 +1,45 @@
+#!/bin/bash -e
+echo "Waiting for util container to set up details..."
+until test -f /data/ipa-done
+do
+	echo "Waiting for IPA setup..."
+	sleep 10
+done
+
+/usr/local/bin/ipa-cert-install
+
+if [ ! -f /data/installed ];
+then
+	echo "Performing Ipsilon setup..."
+	ipsilon-server-install \
+		--root-instance \
+		--yes \
+		--openidc yes \
+		--ldap yes \
+		--ldap-server-url "ldaps://ipa.noggindev.local:636/" \
+		--ldap-tls-level Demand \
+		--ldap-base-dn "dc=noggindev,dc=local" \
+		--ldap-bind-dn-template "uid=%(username)s,cn=users,cn=accounts,dc=noggindev,dc=local"
+
+	echo "Moving httpd config..."
+	mv /etc/httpd/conf.d/ipsilon-root.conf /data/ipsilon-root.conf
+	mv /etc/ipsilon/root /data/ipsilon-config
+	mv /var/lib/ipsilon/root /data/ipsilon-data
+	
+	echo "Marking installed..."
+	touch /data/installed
+fi
+
+echo "Putting httpd configs back in place..."
+if [ ! -f /etc/httpd/conf.d/ipsilon-root.conf ];
+then
+	ls /etc/httpd/conf.d
+	rm -f /etc/httpd/conf.d/{autoindex.conf,userdir.conf,welcome.conf,README}
+	ln -s /data/ipsilon-root.conf /etc/httpd/conf.d/ipsilon-root.conf
+	ln -s /data/ipsilon-config /etc/ipsilon/root
+	ln -s /data/ipsilon-data /var/lib/ipsilon/root
+fi
+
+echo "Running apache..."
+tail --follow --retry /var/log/httpd/{access,error}_log &
+exec /usr/sbin/httpd -X

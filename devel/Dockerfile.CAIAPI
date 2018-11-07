@@ -1,0 +1,10 @@
+FROM fedora
+VOLUME /code
+VOLUME /data
+ENTRYPOINT /usr/local/bin/run
+RUN dnf install -y python3-flask httpd mod_ssl
+RUN rm -f /etc/httpd/conf.d/*
+COPY common/ipa-cert-install /usr/local/bin/ipa-cert-install
+COPY CAIAPI/run /usr/local/bin/run
+COPY CAIAPI/ssl.conf /etc/httpd/conf.d/ssl.conf
+COPY CAIAPI/app.conf /etc/httpd/conf.d/app.conf

@@ -1,0 +1,90 @@
+version: '3.2'
+services:
+  ipa:
+    image: freeipa/freeipa-server
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    volumes:
+    - "ipa-data:/data:Z"
+    - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    hostname: ipa.noggindev.local
+    command: 
+    - "--unattended"
+    - "--ds-password"
+    - "noggindev"
+    - "--admin-password"
+    - "noggindev"
+    - "--domain"
+    - "noggindev.local"
+    - "--realm"
+    - "NOGGINDEV.LOCAL"
+  util:
+    build:
+      context: ./devel
+      dockerfile: Dockerfile.util
+    volumes:
+    - "ipsilon-data:/data/ipsilon:z"
+    - "caiapi-noggin-data:/data/caiapi-noggin:z"
+    hostname: util.noggindev.local
+    links:
+    - "ipa:ipa.noggindev.local"
+  ipsilon:
+    build:
+      context: ./devel
+      dockerfile: Dockerfile.ipsilon
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    volumes:
+    - "ipsilon-data:/data:z"
+    hostname: ipsilon.noggindev.local
+    links:
+    - "ipa:ipa.noggindev.local"
+  caiapi:
+    build:
+      context: ./devel
+      dockerfile: Dockerfile.CAIAPI
+    healthcheck:
+      test: ["CMD", "curl", "-kf", "https://localhost/"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    volumes:
+    - "caiapi-noggin-data:/data:z,ro"
+    - "./CAIAPI:/code:z"
+    hostname: caiapi.noggindev.local
+    links:
+    - "ipsilon:ipsilon.noggindev.local"
+    - "ipa:ipa.noggindev.local"
+    depends_on:
+    - "util"
+  noggin:
+    build:
+      context: ./devel
+      dockerfile: Dockerfile.noggin
+    healthcheck:
+      test: ["CMD", "curl", "-kf", "https://localhost/"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    volumes:
+    - "caiapi-noggin-data:/data:z,ro"
+    - "./noggin:/code:z"
+    hostname: noggin.noggindev.local
+    links:
+    - "ipsilon:ipsilon.noggindev.local"
+    - "ipa:ipa.noggindev.local"
+    - "caiapi:caiapi.noggindev.local"
+    depends_on:
+    - "util"
+    - "caiapi"
+    - "ipsilon"
+volumes:
+  ipa-data:
+  ipsilon-data:
+  caiapi-noggin-data:

@@ -1,0 +1,7 @@
+FROM fedora
+VOLUME /data
+ENTRYPOINT /usr/local/bin/ipsilon-run
+RUN dnf install -y ipsilon ipsilon-openidc ipsilon-authldap
+COPY common/ipa-cert-install /usr/local/bin/ipa-cert-install
+COPY ipsilon/run /usr/local/bin/ipsilon-run
+COPY ipsilon/ssl.conf /etc/httpd/conf.d/ssl.conf

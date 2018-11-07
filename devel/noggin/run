@@ -1,0 +1,22 @@
+#!/bin/bash -e
+echo "Waiting for util container to set up details..."
+until test -f /data/ipa-done
+do
+	echo "Waiting for IPA setup..."
+	sleep 10
+done
+
+/usr/local/bin/ipa-cert-install
+
+cd /code
+echo "Running apache..."
+/usr/sbin/httpd &
+
+export FLASK_APP=noggin/app.py
+export FLASK_DEBUG=1
+exec /usr/bin/flask-3 run \
+	--host 127.0.0.1 \
+	--port 8080 \
+	--reload \
+	--debugger \
+	--with-threads

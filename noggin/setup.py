@@ -4,18 +4,21 @@
 Setup script
 """
 
+import os
 import pkg_resources
-
 from setuptools import setup
-from noggin.app import __version__
+
+
+with open(os.path.join(os.path.dirname(__file__), '../VERSION'), 'r') as v:
+    VERSION = v.read().strip()
 
 
 setup(
-    name='Noggin',
+    name='noggin',
     description='Noggin Account System',
-    version=__version__,
-    author='Ryan Lerch
-    author_email='rlerch@redhat.com
+    version=VERSION,
+    author='Ryan Lerch',
+    author_email='rlerch@redhat.com',
     maintainer='Ryan Lerch',
     maintainer_email='rlerch@redhat.com',
     license='GPLv2',
@@ -23,8 +26,6 @@ setup(
     url='https://pagure.io/noggin',
     packages=['noggin'],
     include_package_data=True,
-    install_requires=[
-        'Flask', 'python-fedora', 'python-openid', 'python-openid-teams',
-        'python-openid-cla'],
+    install_requires=['Flask'],
 )
 

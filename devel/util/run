@@ -1,0 +1,121 @@
+#!/bin/bash -e
+# TODO: Wait until IPA is up
+
+/usr/local/bin/ipa-cert-install
+
+if [ ! -f /tmp/enrolled ];
+then
+	echo "Enrolling into IPA..."
+	ipa-client-install \
+		--server=ipa.noggindev.local \
+		--domain=noggindev.local \
+		--realm=NOGGINDEV.LOCAL \
+		--force-join \
+		--principal=admin \
+		-w noggindev \
+		--no-ssh \
+		--no-sshd \
+		--no-sudo \
+		--no-dns-sshfp \
+		--unattended \
+		--no-nisdomain \
+		--no-ntp
+	
+	touch /tmp/enrolled
+fi
+	
+echo "Getting krb5 ticket..."
+echo "noggindev" | kinit admin@NOGGINDEV.LOCAL
+
+
+CERTSWAITING=()
+
+
+function requestcert() {
+	name=$1
+	hostname=$2
+	location=$3
+
+	echo "Requesting cert for $hostname as $name..."
+
+	echo "Creating $hostname host entry..."
+	ipa host-add \
+		$hostname.noggindev.local \
+		--force || echo "Probably already existed"
+
+	echo "Creating HTTP/$hostname service..."
+	ipa service-add \
+		HTTP/$hostname.noggindev.local \
+		--force || echo "Probably already existed"
+
+	echo "Granting us permissions to request HTTP/$hostname cert..."
+	ipa service-add-host \
+		HTTP/$hostname.noggindev.local \
+		--hosts=util.noggindev.local || echo "Probably already existed"
+
+	echo "Requesting HTTP/$hostname certificate..."
+	ipa-getcert request \
+		-k ${location}.key \
+		-f ${location}.pem \
+		-I $name \
+		-K HTTP/$hostname.noggindev.local \
+		-N "CN=$hostname.noggindev.local,O=noggindev" \
+		-D $hostname.noggindev.local
+}
+
+
+if [ ! -f /data/ipsilon/ipa-done ];
+then
+	requestcert "ipsiloncert" "ipsilon" "/data/ipsilon/httpcert"
+	CERTSWAITING+=('/data/ipsilon/httpcert.pem')
+fi
+
+if [ ! -f /data/caiapi-noggin/ipa-done ];
+then
+	requestcert "caiapicert" "caiapi" "/data/caiapi-noggin/caiapicert"
+	requestcert "noggincert" "noggin" "/data/caiapi-noggin/noggincert"
+	CERTSWAITING+=('/data/caiapi-noggin/caiapicert.pem')
+	CERTSWAITING+=('/data/caiapi-noggin/noggincert.pem')
+fi
+
+
+if [ ${#CERTSWAITING[@]} -eq 0 ]; then
+	echo "No certs to wait for"
+else
+	echo "Waiting for certificate creations..."
+	echo "Certs: ${CERTSWAITING[*]}"
+
+	echo "Starting certmonger..."
+	dbus-run-session certmonger -snd 1 &
+	sleep 1
+
+	while true;
+	do
+		echo "Waiting for certs to be issued..."
+		for certpath in ${CERTSWAITING[*]};
+		do
+			if [ ! -f $certpath ];
+			then
+				echo "Missing: $certpath"
+				sleep 5
+				continue 2
+			fi
+		done
+		break
+	done
+
+	echo "All certs created, killing certmonger..."
+	killall certmonger
+fi
+
+echo "Marking all parts are ready..."
+touch /data/ipsilon/ipa-done
+touch /data/caiapi-noggin/ipa-done
+
+echo "Utility container setup done!"
+
+echo "Stayin' alive..."
+while true
+do
+	sleep 600
+done
