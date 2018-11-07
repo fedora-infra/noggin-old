@@ -112,10 +112,10 @@ echo "Marking all parts are ready..."
 touch /data/ipsilon/ipa-done
 touch /data/caiapi-noggin/ipa-done
 
+echo "Setting up VNC..."
+printf 'noggindev\nnoggindev\nn\n' | vncpasswd
+
 echo "Utility container setup done!"
 
 echo "Stayin' alive..."
-while true
-do
-	sleep 600
-done
+exec vncserver -fg
