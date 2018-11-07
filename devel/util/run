@@ -118,4 +118,5 @@ printf 'noggindev\nnoggindev\nn\n' | vncpasswd
 echo "Utility container setup done!"
 
 echo "Stayin' alive..."
+rm -rf /tmp/.X*
 exec vncserver -fg
