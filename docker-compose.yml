@@ -59,7 +59,7 @@ services:
       retries: 3
     volumes:
     - "caiapi-noggin-data:/data:z,ro"
-    - "./CAIAPI:/code:z"
+    - "./CAIAPI:/code:z,ro"
     hostname: caiapi.noggindev.local
     links:
     - "ipsilon:ipsilon.noggindev.local"
@@ -75,7 +75,7 @@ services:
       retries: 3
     volumes:
     - "caiapi-noggin-data:/data:z,ro"
-    - "./noggin:/code:z"
+    - "./noggin:/code:z,ro"
     hostname: noggin.noggindev.local
     links:
     - "ipsilon:ipsilon.noggindev.local"
