@@ -1,0 +1,9 @@
+language: python
+sudo: enabled
+services:
+- docker
+before_install:
+- ./buildipa.sh
+- docker-compose build
+- docker-compose up --detach
+- docker-compose exec util wait-for-start
