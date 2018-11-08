@@ -13,14 +13,6 @@ services:
     hostname: ipa.noggindev.local
     command: 
     - "--unattended"
-    - "--ds-password"
-    - "noggindev"
-    - "--admin-password"
-    - "noggindev"
-    - "--domain"
-    - "noggindev.local"
-    - "--realm"
-    - "NOGGINDEV.LOCAL"
   util:
     build:
       context: ./devel
