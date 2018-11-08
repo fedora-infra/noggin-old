@@ -8,4 +8,5 @@ RUN dnf install -y firefox xorg-x11-server-Xvfb tigervnc-server
 COPY common/ipa-cert-install /usr/local/bin/ipa-cert-install
 COPY util/run /usr/local/bin/util-run
 COPY util/Xclients /root/.Xclients
-COPY util/myip /usr/local/bin/myip
+COPY util/tools/myip /usr/local/bin/myip
+COPY util/tools/wait-for-start /usr/local/bin/wait-for-start

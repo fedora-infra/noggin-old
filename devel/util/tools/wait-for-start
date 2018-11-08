@@ -1,0 +1,7 @@
+#!/bin/bash
+echo "Waiting until utility container marks itself as done..."
+until test -f /tmp/containerstarted
+do
+	echo "Waiting..."
+	sleep 10
+done

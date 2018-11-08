@@ -1,5 +1,5 @@
 #!/bin/bash -e
-# TODO: Wait until IPA is up
+rm -f /tmp/containerstarted
 
 /usr/local/bin/ipa-cert-install
 
@@ -111,6 +111,7 @@ fi
 echo "Marking all parts are ready..."
 touch /data/ipsilon/ipa-done
 touch /data/caiapi-noggin/ipa-done
+touch /tmp/containerstarted
 
 echo "Setting up VNC..."
 printf 'noggindev\nnoggindev\nn\n' | vncpasswd
