@@ -14,7 +14,6 @@ def get_apifunc(arg):
 def wrapperfunc(func):
     def wrap_wrapper(self, *args, **kwargs):
         def inner_wrapper(arg):
-            print("inner_wrapper for %s has arg: %s" % (func, arg))
             apifunc = get_apifunc(arg)
             func(self, apifunc, *args, **kwargs)
             return apifunc
