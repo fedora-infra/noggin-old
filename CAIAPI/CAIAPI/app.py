@@ -18,6 +18,5 @@ for api_v in APIS:
 @APP.route('/')
 def index():
     return flask.jsonify({
-        'version': 'todo',
         'api_versions': list(APIS.keys()),
     })
