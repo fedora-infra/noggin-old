@@ -1,10 +1,11 @@
-from flask import Blueprint
+from CAIAPI.api import API
 
+api = API(1)
 
-api_v1 = Blueprint('api_v1', __name__)
-
-
-@api_v1.route('/')
+@api
+@api.route('', ['GET'])
+@api.return_code(200, "Hello")
+@api.no_client_auth
+@api.no_user_auth
 def index():
-    print(dir(api_v1))
     return "API version 1"

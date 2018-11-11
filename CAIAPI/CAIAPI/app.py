@@ -2,7 +2,7 @@
 
 import flask
 
-from CAIAPI.api.v1 import api_v1
+from CAIAPI.api.v1 import api as api_v1
 
 APIS = {
     'v1': api_v1,
@@ -12,7 +12,7 @@ APP = flask.Flask(__name__)
 APP.config.from_object('CAIAPI.default_config')
 
 for api_v in APIS:
-    APP.register_blueprint(APIS[api_v], url_prefix='/' + api_v)
+    APP.register_blueprint(APIS[api_v].blueprint, url_prefix='/' + api_v)
 
 
 @APP.route('/')
