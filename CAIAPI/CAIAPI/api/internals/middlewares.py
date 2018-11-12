@@ -1,7 +1,7 @@
 from flask import request
 
 
-from CAIAPI.api.internals.exceptions import APIInvalidRequest
+from CAIAPI.api.internals.exceptions import APIInvalidRequest, APICodingError
 
 
 class Middleware(object):
@@ -9,6 +9,9 @@ class Middleware(object):
         return {}
 
     def intermediate_viewfunc(self):
+        return None
+
+    def manipulate_response(self, resp, kwargs):
         return None
 
 
@@ -56,3 +59,13 @@ class PagingMiddleware(Middleware):
             perpage = PagingMiddleware.PERPAGE_MAX
 
         return {"page": page, "perpage": perpage}
+
+    def manipulate_response(self, resp, kwargs):
+        if "numpages" not in resp:
+            raise APICodingError(
+                "'numpages' missing in response from paged request")
+        numpages = resp.pop("numpages")
+        headers = {
+            "X-CAIAPI-NumPages": numpages,
+        }
+        return resp, headers

@@ -22,4 +22,5 @@ def index(name, page, perpage):
         "message": "Greetings, %s. CAIAPI says hi!" % name,
         "page": page,
         "perpage": perpage,
+        "numpages": 42,
     }

@@ -79,7 +79,23 @@ def generate_viewfunc(final_viewfunc, middlewares):
         logging.debug("Calling final viewfunc %s with args %s",
                       final_viewfunc,
                       kwargs)
-        return final_viewfunc(**kwargs)
+        resp = final_viewfunc(**kwargs)
+
+        headers = {}
+        for middleware in middlewares:
+            new_resp = middleware.manipulate_response(resp, kwargs)
+            extra_headers = None
+            if new_resp and isinstance(new_resp, tuple):
+                new_resp, extra_headers = new_resp
+            if new_resp is not None:
+                logging.debug("Middleware %s manipulated response" % middleware)
+                resp = new_resp
+            if extra_headers is not None:
+                logging.debug("Middleware %s added headers: %s",
+                              middleware, extra_headers)
+                headers.update(extra_headers)
+
+        return resp, headers
     return caller
 
 
@@ -174,7 +190,7 @@ def error_handler(func):
     """
     def handle_caller():
         try:
-            response = func()
+            response, headers = func()
             if not isinstance(response, dict):
                 raise ValueError(
                     "Call function %s (method %s) returned non-dict"
@@ -183,14 +199,22 @@ def error_handler(func):
                 )
             if 'success' not in response:
                 response['success'] = True
-            return jsonify(response)
+            resp = jsonify(response)
+            resp.headers.extend(headers)
+            return resp
+        except APICodingError:
+            logging.exception("API Coding error occured")
+            return jsonify({
+                'success': False,
+                'error': 'Internal coding error',
+            }), 500
         except APIError as err:
             logging.warning("API error occured, code: %s, msg: %s",
                             err.code,
                             err.internal or err.message)
             response = {'success': False,
                         'error': err.message}
-            return jsonify(response), err.code
+            return jsonify(response), err.code, err.headers
         except Exception:
             logging.exception("Unexpected error during request processing")
             return jsonify({
