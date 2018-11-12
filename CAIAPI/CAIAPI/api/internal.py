@@ -28,9 +28,23 @@ def wrapperfunc_noargs(func):
     return wrap_noargs_wrapper
 
 
+def generate_viewfunc(final_viewfunc, intermediates):
+    def caller():
+        kwargs = {}
+
+        for intermediate in intermediates:
+            output = intermediate()
+            if output is not None:
+                kwargs.update(output)
+
+        return final_viewfunc(**kwargs)
+    return caller
+
+
 class APIFunc(object):
     def __init__(self, viewfunc):
         self.viewfunc = viewfunc
+        self.intermediates = []
         self.route = None
         self.arguments = []
         self.return_codes = []
@@ -39,7 +53,7 @@ class APIFunc(object):
 
     def get_viewfunc(self):
         # Return the viewfunc, wrapped in any additional required functions
-        return self.viewfunc
+        return generate_viewfunc(self.viewfunc, self.intermediates)
 
     def check(self):
         invalid = []
