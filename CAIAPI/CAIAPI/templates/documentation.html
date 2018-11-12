@@ -1,0 +1,20 @@
+<html>
+	<head>
+		<title>Documentation CAIAPI API v{{ version }}</title>
+	</head>
+	<body>
+		<h1>Documentation for CAIAPI API v{{ version }}</h1>
+		<h2>Methods:</h2>
+		{% for routeurl, routeinfo in routes.items() %}
+			<h3>/v{{ version }}/{{ routeurl }}</h3>
+			{% for method, apifunc in routeinfo.items() %}
+				<h4>HTTP Method: {{ method }}</h4>
+				<p>
+					{% for arg in apifunc.arguments %}
+						Argument: {{ arg[0] }}, description: {{ arg[2] }}, required: {{ arg[1] }}<br />
+					{% endfor %}
+				</p>
+			{% endfor %}
+		{% endfor %}
+	</body>
+</html>

@@ -7,6 +7,7 @@ from CAIAPI.api.internal import (
     wrapperfunc_noargs,
     register_to_blueprint,
 )
+from CAIAPI.api.selfdocumentation import documentation_viewfunc
 
 
 class API(object):
@@ -26,6 +27,11 @@ class API(object):
                 blueprint,
                 route,
                 regs)
+
+        blueprint.add_url_rule(
+            '/documentation',
+            view_func=documentation_viewfunc(self),
+            methods=['GET'])
 
         return blueprint
 
