@@ -45,9 +45,9 @@ class API(object):
                 raise ValueError(
                     "HTTP method %s for route name %s registered twice"
                     % (http_method, route_name))
-            self.registered[route_name][http_method] = apifunc.get_viewfunc()
+            self.registered[route_name][http_method] = apifunc
         else:
-            self.registered[route_name] = {http_method: apifunc.get_viewfunc()}
+            self.registered[route_name] = {http_method: apifunc}
 
     @wrapperfunc
     def register(self, apifunc, funcname, http_method):

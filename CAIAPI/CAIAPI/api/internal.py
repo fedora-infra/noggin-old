@@ -190,9 +190,6 @@ def route_multiplexer(methods_to_viewfunc):
     This determines and calls the intended view function based on the HTTP
     method.
     """
-    if 'HEAD' not in methods_to_viewfunc and 'GET' in methods_to_viewfunc:
-        methods_to_viewfunc['HEAD'] = methods_to_viewfunc['GET']
-
     def multiplexer():
         viewfunc = methods_to_viewfunc.get(request.method)
         if not viewfunc:
@@ -202,11 +199,18 @@ def route_multiplexer(methods_to_viewfunc):
     return multiplexer
 
 
-def register_to_blueprint(blueprint, route, methods_to_viewfunc):
+def register_to_blueprint(blueprint, route, methods_to_apifunc):
     """ Registers a set of view functions to a blueprint.
 
     This binds a `route_multiplexer` to `route` on the selected blueprint.
     """
+    methods_to_viewfunc = {}
+    for method in methods_to_apifunc:
+        methods_to_viewfunc[method] = methods_to_apifunc[method].get_viewfunc()
+
+    if 'HEAD' not in methods_to_viewfunc and 'GET' in methods_to_viewfunc:
+        methods_to_viewfunc['HEAD'] = methods_to_viewfunc['GET']
+
     blueprint.add_url_rule(
         route,
         view_func=error_handler(route_multiplexer(methods_to_viewfunc)),
