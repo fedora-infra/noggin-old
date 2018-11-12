@@ -149,8 +149,14 @@ class APIFunc(object):
         elif not self.route[1] in ['GET', 'POST', 'PUT']:
             invalid.append(('route', 'invalid method: %s' % self.route[1]))
 
-        if 200 not in [rcode[0] for rcode in self.return_codes]:
-            invalid.append(('return_codes', 'missing return code for 200'))
+        has_2xx = False
+        for rcode in self.return_codes:
+            code = rcode[0]
+            if code >= 200 and code < 300:
+                has_2xx = True
+                break
+        if not has_2xx:
+            invalid.append(('return_codes', 'Missing succes return code doc'))
 
         if self.client_auth is None:
             invalid.append(
