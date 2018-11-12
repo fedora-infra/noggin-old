@@ -9,6 +9,13 @@ from CAIAPI.api.internals.core import (
 )
 
 
+RESERVED_ARGUMENTS = [
+    'user',
+    'page',
+    'perpage',
+]
+
+
 class API(object):
     def __init__(self, version):
         self.version = version
@@ -59,6 +66,9 @@ class API(object):
 
     @wrapperfunc
     def argument(self, apifunc, argname, description, required=False):
+        if argname in RESERVED_ARGUMENTS:
+            raise ValueError("Argument name '%s' is reserved" % argname)
+
         apifunc.arguments.append({
             "name": argname,
             "description": description,
