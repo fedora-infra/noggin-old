@@ -17,3 +17,12 @@ class APICodingError(APIError):
             500,
             "API Coding error occured",
             description)
+
+
+class APIUnauthorizedError(APIError):
+    def __init__(self, internal, headers=None):
+        super(APIUnauthorizedError, self).__init__(
+            401,
+            "Unauthorized",
+            internal,
+            headers)

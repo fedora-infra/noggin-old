@@ -4,6 +4,7 @@ import logging
 
 from CAIAPI.api.internals.exceptions import APIError
 from CAIAPI.api.internals.middlewares import *
+from CAIAPI.api.internals.security import *
 
 
 def get_apifunc(arg):
@@ -124,6 +125,9 @@ class APIFunc(object):
         API call.
         """
         # Generate some common middlewares
+        if self.user_auth is not False:
+            self.middlewares.append(UserAuthMiddleware(self.user_auth))
+
         if self.arguments:
             self.middlewares.append(ArgumentMiddleware(self.arguments))
 

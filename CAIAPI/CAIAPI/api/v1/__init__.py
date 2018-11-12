@@ -16,7 +16,7 @@ def index():
 @api.argument('name', 'User name to say hello to')
 @api.paged
 @api.no_client_auth
-@api.no_user_auth
+@api.user_auth(['testscope'])
 def index(name, page, perpage):
     return {
         "message": "Greetings, %s. CAIAPI says hi!" % name,

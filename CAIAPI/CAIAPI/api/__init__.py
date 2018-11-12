@@ -79,6 +79,10 @@ class API(object):
     def no_client_auth(self, apifunc):
         apifunc.client_auth = False
 
+    @wrapperfunc
+    def user_auth(self, apifunc, required_scopes):
+        apifunc.user_auth = required_scopes
+
     @wrapperfunc_noargs
     def no_user_auth(self, apifunc):
         apifunc.user_auth = False
