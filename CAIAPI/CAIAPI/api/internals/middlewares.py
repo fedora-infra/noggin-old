@@ -31,3 +31,28 @@ class ArgumentMiddleware(Middleware):
                 raise APIInvalidRequest("Argument '%s' is required" % argkey)
 
         return args
+
+
+class PagingMiddleware(Middleware):
+    PERPAGE_DEFAULT = 250
+    PERPAGE_MAX = 250
+
+    def request_infos(self):
+        page = request.args.get("page", 1)
+        perpage = request.args.get("perpage", PagingMiddleware.PERPAGE_DEFAULT)
+        try:
+            page = int(page)
+        except ValueError:
+            raise APIInvalidRequest("'page' must be an integer")
+        try:
+            perpage = int(perpage)
+        except ValueError:
+            raise APIInvalidRequest("'perpage' must be an integer")
+        if page < 1:
+            raise APIInvalidRequest("'page' must be >= 1")
+        if perpage < 1:
+            raise APIInvalidRequest("'perpage' must be >= 1")
+        if perpage > PagingMiddleware.PERPAGE_MAX:
+            perpage = PagingMiddleware.PERPAGE_MAX
+
+        return {"page": page, "perpage": perpage}

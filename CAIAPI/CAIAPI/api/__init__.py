@@ -65,15 +65,15 @@ class API(object):
         apifunc.return_codes.append((return_code, description))
 
     @wrapperfunc
-    def argument(self, apifunc, argname, description, required=False):
+    def argument(self, apifunc, argname, *args, **kwargs):
         if argname in RESERVED_ARGUMENTS:
             raise ValueError("Argument name '%s' is reserved" % argname)
 
-        apifunc.arguments.append({
-            "name": argname,
-            "description": description,
-            "required": required,
-        })
+        apifunc.add_argument(argname, *args, **kwargs)
+
+    @wrapperfunc_noargs
+    def paged(self, apifunc):
+        apifunc.add_paging()
 
     @wrapperfunc_noargs
     def no_client_auth(self, apifunc):

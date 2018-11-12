@@ -97,6 +97,7 @@ class APIFunc(object):
         self.return_codes = []
         self.client_auth = None
         self.user_auth = None
+        self.paged = False
 
     def get_viewfunc(self):
         """ Function to generate the actual Flask view function.
@@ -109,6 +110,9 @@ class APIFunc(object):
         # Generate some common middlewares
         if self.arguments:
             self.middlewares.append(ArgumentMiddleware(self.arguments))
+
+        if self.paged:
+            self.middlewares.append(PagingMiddleware())
 
         # Return the viewfunc, wrapped with requested middlewares
         return generate_viewfunc(self.viewfunc, self.middlewares)
@@ -148,6 +152,18 @@ class APIFunc(object):
                 "APIFunc for %s is invalid: %s"
                 % (self.viewfunc.__name__,
                    ', '.join(msgs)))
+
+    def add_argument(self, argname, description, required=True):
+        """ Add an argument to the APIFunc. """
+        self.arguments.append({
+            "name": argname,
+            "description": description,
+            "required": required,
+        })
+
+    def add_paging(self):
+        """ Add paging to the APIFunc. """
+        self.paged = True
 
 
 def error_handler(func):
