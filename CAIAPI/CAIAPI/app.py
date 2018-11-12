@@ -2,6 +2,7 @@
 
 import flask
 
+from CAIAPI.api.selfdocumentation import documentation_viewfunc
 from CAIAPI.api.v1 import api as api_v1
 
 APIS = {
@@ -13,6 +14,10 @@ APP.config.from_object('CAIAPI.default_config')
 
 for api_v in APIS:
     APP.register_blueprint(APIS[api_v].get_blueprint(), url_prefix='/' + api_v)
+    APP.add_url_rule(
+        "/documentation/%s" % api_v,
+        view_func=documentation_viewfunc(APIS[api_v]),
+        methods=["GET"])
 
 
 @APP.route('/')

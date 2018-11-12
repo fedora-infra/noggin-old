@@ -22,10 +22,10 @@ class ArgumentMiddleware(Middleware):
         hadreq = request.json is not None
 
         for argument in self.arguments:
-            argkey, required, _ = argument
+            argkey = argument["name"]
             if argkey in reqjson:
                 args[argkey] = reqjson[argkey]
-            elif required:
+            elif argument["required"]:
                 if not hadreq:
                     raise APIInvalidRequest("JSON request required")
                 raise APIInvalidRequest("Argument '%s' is required" % argkey)

@@ -7,7 +7,6 @@ from CAIAPI.api.internal import (
     wrapperfunc_noargs,
     register_to_blueprint,
 )
-from CAIAPI.api.selfdocumentation import documentation_viewfunc
 
 
 class API(object):
@@ -27,11 +26,6 @@ class API(object):
                 blueprint,
                 route,
                 regs)
-
-        blueprint.add_url_rule(
-            '/documentation',
-            view_func=documentation_viewfunc(self),
-            methods=['GET'])
 
         return blueprint
 
@@ -64,8 +58,12 @@ class API(object):
         apifunc.return_codes.append((return_code, description))
 
     @wrapperfunc
-    def argument(self, apifunc, argname, required, description):
-        apifunc.arguments.append((argname, required, description))
+    def argument(self, apifunc, argname, description, required=False):
+        apifunc.arguments.append({
+            "name": argname,
+            "description": description,
+            "required": required,
+        })
 
     @wrapperfunc_noargs
     def no_client_auth(self, apifunc):

@@ -13,7 +13,7 @@ def index():
 @api
 @api.register('', 'POST')
 @api.return_code(200, "Hello")
-@api.argument('name', True, 'User name to say hello to')
+@api.argument('name', 'User name to say hello to')
 @api.no_client_auth
 @api.no_user_auth
 def index(name):

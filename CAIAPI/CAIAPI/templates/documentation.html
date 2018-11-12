@@ -11,7 +11,7 @@
 				<h4>HTTP Method: {{ method }}</h4>
 				<p>
 					{% for arg in apifunc.arguments %}
-						Argument: {{ arg[0] }}, description: {{ arg[2] }}, required: {{ arg[1] }}<br />
+						Argument: {{ arg["name"] }}, description: {{ arg["description"] }}, required: {{ arg["required"] }}<br />
 					{% endfor %}
 				</p>
 			{% endfor %}
