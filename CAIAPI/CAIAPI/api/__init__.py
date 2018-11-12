@@ -1,7 +1,7 @@
 from flask import Blueprint
 
 
-from CAIAPI.api.internal import (
+from CAIAPI.api.internals.core import (
     APIFunc,
     wrapperfunc,
     wrapperfunc_noargs,

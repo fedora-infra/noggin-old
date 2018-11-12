@@ -2,8 +2,8 @@ from flask import Blueprint, request, jsonify
 import logging
 
 
-from CAIAPI.api.middlewares import *
-from CAIAPI.api.exceptions import APIError
+from CAIAPI.api.internals.exceptions import APIError
+from CAIAPI.api.internals.middlewares import *
 
 
 def get_apifunc(arg):

@@ -1,7 +1,7 @@
 from flask import request
 
 
-from CAIAPI.api.exceptions import APIInvalidRequest
+from CAIAPI.api.internals.exceptions import APIInvalidRequest
 
 
 class Middleware(object):

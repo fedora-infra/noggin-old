@@ -2,7 +2,7 @@
 
 import flask
 
-from CAIAPI.api.selfdocumentation import documentation_viewfunc
+from CAIAPI.api.internals.selfdocumentation import documentation_viewfunc
 from CAIAPI.api.v1 import api as api_v1
 
 APIS = {
