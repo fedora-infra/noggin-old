@@ -2,6 +2,10 @@ from flask import Blueprint, request, jsonify
 import logging
 
 
+from CAIAPI.api.middlewares import *
+from CAIAPI.api.exceptions import APIError
+
+
 def get_apifunc(arg):
     if isinstance(arg, APIFunc):
         return arg
@@ -28,15 +32,29 @@ def wrapperfunc_noargs(func):
     return wrap_noargs_wrapper
 
 
-def generate_viewfunc(final_viewfunc, intermediates):
+def generate_viewfunc(final_viewfunc, middlewares):
     def caller():
+        intermediates = []
         kwargs = {}
 
-        for intermediate in intermediates:
-            output = intermediate()
-            if output is not None:
+        for middleware in middlewares:
+            output = middleware.request_infos()
+            if output:
+                logging.debug("Middleware %s generated kwargs: %s",
+                              middleware,
+                              output)
                 kwargs.update(output)
 
+            result = middleware.intermediate_viewfunc()
+            if result is not None:
+                logging.debug("Middleware %s returned: %s",
+                              middleware,
+                              result)
+                return result
+
+        logging.debug("Calling final viewfunc %s with args %s",
+                      final_viewfunc,
+                      kwargs)
         return final_viewfunc(**kwargs)
     return caller
 
@@ -44,7 +62,7 @@ def generate_viewfunc(final_viewfunc, intermediates):
 class APIFunc(object):
     def __init__(self, viewfunc):
         self.viewfunc = viewfunc
-        self.intermediates = []
+        self.middlewares = []
         self.route = None
         self.arguments = []
         self.return_codes = []
@@ -52,8 +70,12 @@ class APIFunc(object):
         self.user_auth = None
 
     def get_viewfunc(self):
-        # Return the viewfunc, wrapped in any additional required functions
-        return generate_viewfunc(self.viewfunc, self.intermediates)
+        # Generate some common middlewares
+        if self.arguments:
+            self.middlewares.append(ArgumentMiddleware(self.arguments))
+
+        # Return the viewfunc, wrapped with requested middlewares
+        return generate_viewfunc(self.viewfunc, self.middlewares)
 
     def check(self):
         invalid = []
@@ -95,12 +117,19 @@ def error_handler(func):
             if 'success' not in response:
                 response['success'] = True
             return jsonify(response)
+        except APIError as err:
+            logging.warning("API error occured, code: %s, msg: %s",
+                            err.code,
+                            err.message)
+            response = {'success': False,
+                        'error': err.message}
+            return jsonify(response), err.code
         except Exception:
             logging.exception("Unexpected error during request processing")
             return jsonify({
                 'success': False,
                 'error': 'Internal server error',
-            })
+            }), 500
     return handle_caller
 
 

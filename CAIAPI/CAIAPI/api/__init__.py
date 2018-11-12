@@ -58,8 +58,8 @@ class API(object):
         apifunc.return_codes.append((return_code, description))
 
     @wrapperfunc
-    def argument(self, apifunc, argname, description):
-        apifunc.arguments.append((argname, description))
+    def argument(self, apifunc, argname, required, description):
+        apifunc.arguments.append((argname, required, description))
 
     @wrapperfunc_noargs
     def no_client_auth(self, apifunc):
