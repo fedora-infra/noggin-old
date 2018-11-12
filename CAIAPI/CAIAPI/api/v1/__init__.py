@@ -16,4 +16,5 @@ def index():
 @api.no_client_auth
 @api.no_user_auth
 def index():
+    raise Exception('Some error occured!')
     return "API version 1 via POST"

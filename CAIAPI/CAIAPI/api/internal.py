@@ -1,4 +1,5 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
+import logging
 
 
 def get_apifunc(arg):
@@ -67,17 +68,43 @@ class APIFunc(object):
                    ', '.join(msgs)))
 
 
+def error_handler(func):
+    def handle_caller():
+        try:
+            response = func()
+            if not isinstance(response, dict):
+                raise ValueError(
+                    "Call function %s (method %s) returned non-dict"
+                    % (func.methods_to_viewfunc.get(request.method),
+                       request.method)
+                )
+            if 'success' not in response:
+                response['success'] = True
+            return jsonify(response)
+        except Exception:
+            logging.exception("Unexpected error during request processing")
+            return jsonify({
+                'success': False,
+                'error': 'Internal server error',
+            })
+    return handle_caller
+
+
 def route_multiplexer(methods_to_viewfunc):
+    if 'HEAD' not in methods_to_viewfunc and 'GET' in methods_to_viewfunc:
+        methods_to_viewfunc['HEAD'] = methods_to_viewfunc['GET']
+
     def multiplexer():
         viewfunc = methods_to_viewfunc.get(request.method)
         if not viewfunc:
             raise Exception("No viewfunc found somehow?")
         return viewfunc()
+    multiplexer.methods_to_viewfunc = methods_to_viewfunc
     return multiplexer
 
 
 def register_to_blueprint(blueprint, route, methods_to_viewfunc):
     blueprint.add_url_rule(
         route,
-        view_func=route_multiplexer(methods_to_viewfunc),
+        view_func=error_handler(route_multiplexer(methods_to_viewfunc)),
         methods=list(methods_to_viewfunc.keys()))
