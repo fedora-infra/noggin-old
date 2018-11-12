@@ -3,6 +3,8 @@
 import flask
 
 from CAIAPI.api.internals.selfdocumentation import documentation_viewfunc
+from CAIAPI.config_handling import check_config
+
 from CAIAPI.api.v1 import api as api_v1
 
 APIS = {
@@ -12,8 +14,7 @@ APIS = {
 APP = flask.Flask(__name__)
 APP.config.from_object('CAIAPI.default_config')
 
-if not APP.debug and APP.config["SECRET_KEY"] == "CHANGEME":
-    raise ValueError("Configure secret key!")
+check_config(APP)
 
 for api_v in APIS:
     APP.register_blueprint(APIS[api_v].get_blueprint(), url_prefix='/' + api_v)
