@@ -1,5 +1,6 @@
 from CAIAPI.api.internals.exceptions import APIUnauthorizedError
 from CAIAPI.api.internals.middlewares import Middleware
+from CAIAPI.oidc import oidc
 
 
 # Security sensitive middlewares

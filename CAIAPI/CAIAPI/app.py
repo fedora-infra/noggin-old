@@ -4,6 +4,7 @@ import flask
 
 from CAIAPI.api.internals.selfdocumentation import documentation_viewfunc
 from CAIAPI.config_handling import check_config
+from CAIAPI.oidc import oidc
 
 from CAIAPI.api.v1 import api as api_v1
 
@@ -13,6 +14,7 @@ APIS = {
 
 APP = flask.Flask(__name__)
 APP.config.from_object('CAIAPI.default_config')
+oidc.init_app(APP)
 
 check_config(APP)
 
