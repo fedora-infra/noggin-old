@@ -4,7 +4,7 @@ VOLUME /data
 ENTRYPOINT /usr/local/bin/run
 EXPOSE 80/tcp
 EXPOSE 443/tcp
-RUN dnf install -y python3-flask httpd mod_ssl
+RUN dnf install -y python3-flask httpd mod_ssl python3-flask-oidc
 RUN rm -f /etc/httpd/conf.d/*
 COPY common/ipa-cert-install /usr/local/bin/ipa-cert-install
 COPY CAIAPI/run /usr/local/bin/run
