@@ -12,6 +12,9 @@ APIS = {
 APP = flask.Flask(__name__)
 APP.config.from_object('CAIAPI.default_config')
 
+if not APP.debug and APP.config["SECRET_KEY"] == "CHANGEME":
+    raise ValueError("Configure secret key!")
+
 for api_v in APIS:
     APP.register_blueprint(APIS[api_v].get_blueprint(), url_prefix='/' + api_v)
     APP.add_url_rule(
