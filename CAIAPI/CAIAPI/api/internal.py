@@ -120,7 +120,7 @@ def error_handler(func):
         except APIError as err:
             logging.warning("API error occured, code: %s, msg: %s",
                             err.code,
-                            err.message)
+                            err.internal or err.message)
             response = {'success': False,
                         'error': err.message}
             return jsonify(response), err.code

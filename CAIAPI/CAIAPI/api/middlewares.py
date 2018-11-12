@@ -25,6 +25,6 @@ class ArgumentMiddleware(Middleware):
             if argkey in reqjson:
                 args[argkey] = reqjson[argkey]
             elif required:
-                raise APIInvalidRequest('Argument "%s" is required' % argkey)
+                raise APIInvalidRequest("Argument '%s' is required" % argkey)
 
         return args
