@@ -5,6 +5,7 @@ VOLUME /data/caiapi-noggin
 ENTRYPOINT /usr/local/bin/util-run
 RUN dnf install -y freeipa-client less
 RUN dnf install -y firefox xorg-x11-server-Xvfb tigervnc-server
+RUN dnf install -y python3-flask-oidc
 COPY common/ipa-cert-install /usr/local/bin/ipa-cert-install
 COPY util/run /usr/local/bin/util-run
 COPY util/Xclients /root/.Xclients

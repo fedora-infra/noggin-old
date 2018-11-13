@@ -78,6 +78,16 @@ then
 	CERTSWAITING+=('/data/caiapi-noggin/noggincert.pem')
 fi
 
+function register_oidc() {
+	apphost="$1"
+	out_file="$2"
+
+	oidc-register \
+		https://ipsilon.noggindev.local/openidc/ \
+		https://${apphost}.noggindev.local/ \
+		--token-introspection-uri https://ipsilon.noggindev.local/openidc/TokenInfo \
+		--output-file $out_file
+}
 
 if [ ${#CERTSWAITING[@]} -eq 0 ]; then
 	echo "No certs to wait for"
@@ -108,9 +118,17 @@ else
 	killall certmonger
 fi
 
+if [ ! -f /data/caiapi-noggin/oidc-done ];
+then
+	register_oidc "caiapi" "/data/caiapi-noggin/oidc-caiapi.json"
+	register_oidc "noggin" "/data/caiapi-noggin/oidc-noggin.json"
+fi
+
+
 echo "Marking all parts are ready..."
 touch /data/ipsilon/ipa-done
 touch /data/caiapi-noggin/ipa-done
+touch /data/caiapi-noggin/oidc-done
 touch /tmp/containerstarted
 
 echo "Setting up VNC..."
