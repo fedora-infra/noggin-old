@@ -14,7 +14,6 @@ class CAIClient(object):
         return self.oidc_client.get_token(required_scopes)
 
     def __call__(self, operation, method, args, check_validity=True):
-        print("Calling %s, method %s, args %s" % (operation, method, args))
         operinfo = self.api_definition["operations"][operation][method]
         for arg in operinfo["arguments"]:
             if arg["required"] and arg["name"] not in args:
