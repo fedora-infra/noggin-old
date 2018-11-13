@@ -34,6 +34,5 @@ class UserAuthMiddleware(Middleware):
         # Don't forget to do the checking of scopes
         token_scopes = set(token_info.get('scope', '').split(' '))
         if not self.required_scopes.issubset(token_scopes):
-            raise APIForbiddenError("Token does not have required scopes",
-                                    headers=AUTH_HDRS)
+            raise APIForbiddenError("Token does not have required scopes")
         return {"user": token_info}
