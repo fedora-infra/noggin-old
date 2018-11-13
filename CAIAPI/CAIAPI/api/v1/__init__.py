@@ -23,4 +23,5 @@ def index(name, user, page, perpage):
         "page": page,
         "perpage": perpage,
         "numpages": 42,
+        "user": user,
     }
