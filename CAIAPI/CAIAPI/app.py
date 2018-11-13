@@ -14,6 +14,7 @@ from CAIAPI.api.v1 import api as api_v1
 APIS = {
     'v1': api_v1,
 }
+DEFAULT_API = "v1"
 
 APP = flask.Flask(__name__)
 APP.config.from_object('CAIAPI.default_config')
@@ -37,4 +38,5 @@ for api_v in APIS:
 def index():
     return flask.jsonify({
         'api_versions': list(APIS.keys()),
+        'default_version': DEFAULT_API,
     })

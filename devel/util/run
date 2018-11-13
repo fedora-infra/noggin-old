@@ -131,10 +131,16 @@ done
 
 if [ ! -f /data/caiapi-noggin/oidc-done ];
 then
+	echo "Registering caiapi/noggin..."
 	register_oidc "caiapi" "/data/caiapi-noggin/oidc-caiapi.json"
 	register_oidc "noggin" "/data/caiapi-noggin/oidc-noggin.json"
 fi
 
+if [ ! -f /data/caiapi-noggin/caiclient_done ];
+then
+	echo "Performing manual registrations..."
+	/usr/local/bin/manual_reg "https://ipsilon.noggindev.local/openidc/" "/data/caiapi-noggin/caiclient_client.json" "http://localhost:12345/" "http://localhost:23456/"
+fi
 
 echo "Marking all parts are ready..."
 touch /data/caiapi-noggin/oidc-done

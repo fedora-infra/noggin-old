@@ -1,0 +1,27 @@
+#!/bin/python3
+from flask_oidc import discovery
+from flask_oidc import registration
+import json
+import os
+import sys
+
+
+if len(sys.argv) < 3:
+    raise Exception("Invalid call")
+
+provider_url = sys.argv[1]
+outfile = sys.argv[2]
+redirect_uris = sys.argv[3:]
+
+if os.path.exists(outfile):
+    print("Outfile exists")
+    sys.exit(0)
+
+registration.check_redirect_uris(redirect_uris)
+
+provider = discovery.discover_OP_information(provider_url)
+
+reg_info = registration.register_client(provider, redirect_uris)
+
+with open(outfile, 'w') as out:
+    out.write(json.dumps(reg_info))
