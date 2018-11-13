@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 import logging
 
 
+from CAIAPI import APP
 from CAIAPI.api.internals.exceptions import APIError
 from CAIAPI.api.internals.middlewares import *
 from CAIAPI.api.internals.security import *
@@ -266,3 +267,8 @@ def register_to_blueprint(blueprint, route, methods_to_apifunc):
         endpoint=route,
         view_func=error_handler(route_multiplexer(methods_to_viewfunc)),
         methods=list(methods_to_viewfunc.keys()))
+
+
+def extend_scopes(scopes):
+    return ["%s/%s" % (APP.config["OIDC_SCOPE_PREFIX"], scope)
+            for scope in scopes]

@@ -6,6 +6,7 @@ from CAIAPI.api.internals.core import (
     wrapperfunc,
     wrapperfunc_noargs,
     register_to_blueprint,
+    extend_scopes,
 )
 
 
@@ -81,7 +82,7 @@ class API(object):
 
     @wrapperfunc
     def user_auth(self, apifunc, required_scopes):
-        apifunc.user_auth = required_scopes
+        apifunc.user_auth = extend_scopes(required_scopes)
 
     @wrapperfunc_noargs
     def no_user_auth(self, apifunc):
