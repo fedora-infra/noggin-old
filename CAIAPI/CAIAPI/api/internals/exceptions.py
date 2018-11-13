@@ -26,3 +26,12 @@ class APIUnauthorizedError(APIError):
             "Unauthorized",
             internal,
             headers)
+
+
+class APIForbiddenError(APIError):
+    def __init__(self, internal, headers=None):
+        super(APIUnauthorizedError, self).__init__(
+            403,
+            "Forbidden",
+            internal,
+            headers)
