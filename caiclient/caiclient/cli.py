@@ -41,6 +41,7 @@ def full_authorize(client, args):
     token = client.oidc_client.get_token(list(scopes))
     if token is None:
         raise SystemExit("Failure getting token")
+    print(token)
 
 
 def generate_special_parser(client, parser):
@@ -77,6 +78,7 @@ def run():
         "id_provider_mapping": {"Token": "Token",
                                 "Authorization": "Authorization"},
         "client_id": oidc["client_id"],
+        "client_secret": oidc["client_secret"],
     }
     client = CAIClient(server,
                        api_version=apiver,
