@@ -262,6 +262,7 @@ def register_to_blueprint(blueprint, route, methods_to_apifunc):
         methods_to_viewfunc['HEAD'] = methods_to_viewfunc['GET']
 
     blueprint.add_url_rule(
-        route,
+        "/%s" % route,
+        endpoint=route,
         view_func=error_handler(route_multiplexer(methods_to_viewfunc)),
         methods=list(methods_to_viewfunc.keys()))
