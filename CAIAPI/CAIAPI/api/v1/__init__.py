@@ -23,5 +23,5 @@ def ping(name, user, page, perpage):
         "page": page,
         "perpage": perpage,
         "numpages": 42,
-        "user": user,
+        "user": str(user),
     }
