@@ -118,6 +118,17 @@ else
 	killall certmonger
 fi
 
+echo "Marking certificates as ready..."
+touch /data/ipsilon/ipa-done
+touch /data/caiapi-noggin/ipa-done
+
+echo "Waiting for Ipsilon to come up..."
+until (curl -qf http://ipsilon.noggindev.local/ >dev/null 2>&1)
+do
+	echo "Waiting for Ipsilon to start..."
+	sleep 10
+done
+
 if [ ! -f /data/caiapi-noggin/oidc-done ];
 then
 	register_oidc "caiapi" "/data/caiapi-noggin/oidc-caiapi.json"
@@ -126,8 +137,6 @@ fi
 
 
 echo "Marking all parts are ready..."
-touch /data/ipsilon/ipa-done
-touch /data/caiapi-noggin/ipa-done
 touch /data/caiapi-noggin/oidc-done
 touch /tmp/containerstarted
 
