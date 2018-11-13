@@ -27,12 +27,19 @@ class CAIClient(object):
         kwargs = {"headers": {}}
         if method not in ("GET", "HEAD"):
             kwargs["json"] = args
-        # TODO: User and client auth
+
         if operinfo["auth"]["user"] is not False:
             usertoken = self.get_user_token(operinfo["auth"]["user"])
             if not usertoken:
                 raise RuntimeError("No user token present")
             kwargs["headers"]["Authorization"] = "Bearer %s" % usertoken
+        # TODO: Client auth
         resp = requests.request(method, url, **kwargs)
+        if resp.status_code == 401:
+            # OpenIDC-Client is responsible for erroring if we call twice
+            new_token = self.oidc_client.report_token_issue()
+            if not new_token:
+                resp.raise_for_status()
+            return self(operation, method, args, check_validity=False)
         resp.raise_for_status()
         return resp.json()
