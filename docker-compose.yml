@@ -38,6 +38,7 @@ services:
       retries: 3
     volumes:
     - "ipsilon-data:/data:z"
+    - "./extensions/ipsilon:/ipsilon_extensions:z,ro"
     hostname: ipsilon.noggindev.local
     links:
     - "ipa:ipa.noggindev.local"

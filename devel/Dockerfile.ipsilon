@@ -1,5 +1,6 @@
 FROM fedora
 VOLUME /data
+VOLUME /ipsilon_extensions
 ENTRYPOINT /usr/local/bin/ipsilon-run
 EXPOSE 80/tcp
 EXPOSE 443/tcp
@@ -7,3 +8,4 @@ RUN dnf install -y ipsilon ipsilon-openidc ipsilon-authldap
 COPY common/ipa-cert-install /usr/local/bin/ipa-cert-install
 COPY ipsilon/run /usr/local/bin/ipsilon-run
 COPY ipsilon/ssl.conf /etc/httpd/conf.d/ssl.conf
+RUN ln -s /ipsilon_extensions/caiapi.py /usr/lib/python2.7/site-packages/ipsilon/providers/openidc/plugins/caiapi.py

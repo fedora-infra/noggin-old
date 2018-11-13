@@ -15,6 +15,7 @@ then
 		--root-instance \
 		--yes \
 		--openidc yes \
+		--openidc-extensions ipsilon,caiapi \
 		--ldap yes \
 		--ldap-server-url "ldaps://ipa.noggindev.local:636/" \
 		--ldap-tls-level Demand \
