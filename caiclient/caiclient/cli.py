@@ -10,6 +10,7 @@ from caiclient import CAIClient
 def run_operation_method(client, args):
     method = args.pop("method")
     operation = args.pop("operation")
+    args.pop("func")
     resp = client(operation, method, args)
     print("Return value: %s" % resp)
 
