@@ -1,0 +1,2 @@
+class CAIClient(object):
+    pass

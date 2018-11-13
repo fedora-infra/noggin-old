@@ -1,0 +1,4 @@
+#!/bin/bash
+cd /code/caiclient
+export PYTHONPATH=/code/caiclient
+exec python3 caiclient $@

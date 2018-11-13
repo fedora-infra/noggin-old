@@ -20,6 +20,7 @@ services:
     volumes:
     - "ipsilon-data:/data/ipsilon:z"
     - "caiapi-noggin-data:/data/caiapi-noggin:z"
+    - "./caiclient:/code/caiclient:z,ro"
     hostname: util.noggindev.local
     links:
     - "ipa:ipa.noggindev.local"
