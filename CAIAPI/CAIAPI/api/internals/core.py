@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+import inspect
 import logging
 
 
@@ -60,6 +61,20 @@ def generate_viewfunc(final_viewfunc, middlewares):
     After that, it calls the actual view function with the middleware arguments
     as keyword arguments.
     """
+    accepted_kwargs = []
+    for param in inspect.signature(final_viewfunc).parameters.values():
+        if param.kind == param.POSITIONAL_ONLY:
+            raise ValueError("%s expects positional argument %s"
+                             % (final_viewfunc, param.name))
+        elif param.kind == param.VAR_POSITIONAL:
+            raise ValueError("%s expects var-positional argument %s"
+                             % (final_viewfunc, param.name))
+        elif param.kind == param.VAR_KEYWORD:
+            raise ValueError("%s expects var-keyword argument %s"
+                             % (final_viewfunc, param.name))
+
+        accepted_kwargs.append(param.name)
+
     def caller():
         intermediates = []
         kwargs = {}
@@ -85,6 +100,15 @@ def generate_viewfunc(final_viewfunc, middlewares):
             kwargs.get('client_info'),
         )
         kwargs['ldap'] = ldap_client
+
+        logging.debug("Got args %s for viewfunc %s pre-filter",
+                      kwargs,
+                      final_viewfunc)
+
+        kwargs = {key: kwargs[key] for key in kwargs if key in accepted_kwargs}
+        for argname in kwargs:
+            if argname not in accepted_kwargs:
+                del kwargs[argname]
 
         logging.debug("Calling final viewfunc %s with args %s",
                       final_viewfunc,
