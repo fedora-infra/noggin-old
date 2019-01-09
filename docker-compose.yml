@@ -10,6 +10,7 @@ services:
     volumes:
     - "ipa-data:/data:Z"
     - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    - "${PWD}/extensions/ipa/99caiapi.ldif:/data/etc/dirsrv/slapd-NOGGINDEV-LOCAL/schema/99caiapi.ldif:z,ro"
     hostname: ipa.noggindev.local
     command: 
     - "--unattended"
@@ -54,6 +55,7 @@ services:
     volumes:
     - "caiapi-noggin-data:/data:z,ro"
     - "./CAIAPI:/code:z,ro"
+    - "${PWD}/devel/CAIAPI/appconfig.cfg:/usr/share/caiapi_static.cfg:z,ro"
     hostname: caiapi.noggindev.local
     links:
     - "ipsilon:ipsilon.noggindev.local"

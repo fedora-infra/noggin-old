@@ -11,6 +11,7 @@ from CAIAPI.config_handling import check_config
 from CAIAPI.oidc import oidc
 
 APP.config.from_object('CAIAPI.default_config')
+APP.config.from_envvar('CAIAPI_SETTINGS')
 oidc.init_app(APP)
 
 check_config(APP)

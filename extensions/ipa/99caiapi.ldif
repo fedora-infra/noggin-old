@@ -1,0 +1,3 @@
+# CAIAPI LDAP schema
+# OID ARC: 1.3.6.1.4.1.37476.9000.56.2
+dn: cn=schema

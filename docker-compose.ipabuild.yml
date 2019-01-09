@@ -1,0 +1,17 @@
+version: '3.2'
+services:
+  ipa:
+    image: freeipa/freeipa-server
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    volumes:
+    - "ipa-data:/data:Z"
+    - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    hostname: ipa.noggindev.local
+    command: 
+    - "--unattended"
+volumes:
+  ipa-data:

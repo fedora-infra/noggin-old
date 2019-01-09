@@ -17,7 +17,7 @@ cd /code
 echo "Running apache..."
 /usr/sbin/httpd &
 
-export OIDC_CLIENT_SECRETS=/data/oidc-caiapi.json
+export CAIAPI_SETTINGS=/usr/share/caiapi_static.cfg
 export FLASK_APP=CAIAPI/app.py
 export FLASK_DEBUG=1
 exec /usr/bin/flask-3 run \

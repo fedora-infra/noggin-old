@@ -5,7 +5,6 @@ from CAIAPI.api.internals.exceptions import (
     APIForbiddenError,
 )
 from CAIAPI.api.internals.middlewares import Middleware
-from CAIAPI.api.internals.security.userinfo import UserShim
 from CAIAPI.oidc import oidc
 
 
@@ -36,4 +35,4 @@ class UserAuthMiddleware(Middleware):
         token_scopes = set(token_info.get('scope', '').split(' '))
         if not self.required_scopes.issubset(token_scopes):
             raise APIForbiddenError("Token does not have required scopes")
-        return {"user": UserShim(token_info)}
+        return {"user_tokeninfo": token_info}

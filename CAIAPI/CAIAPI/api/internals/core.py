@@ -6,6 +6,7 @@ from CAIAPI import APP
 from CAIAPI.api.internals.exceptions import APIError
 from CAIAPI.api.internals.middlewares import *
 from CAIAPI.api.internals.security import *
+from CAIAPI.api.internals.security.ldap_middler import LdapClient
 
 
 def get_apifunc(arg):
@@ -77,6 +78,13 @@ def generate_viewfunc(final_viewfunc, middlewares):
                               middleware,
                               result)
                 return result
+
+        # Build the LDAP client
+        ldap_client = LdapClient(
+            kwargs.get('user_tokeninfo'),
+            kwargs.get('client_info'),
+        )
+        kwargs['ldap'] = ldap_client
 
         logging.debug("Calling final viewfunc %s with args %s",
                       final_viewfunc,

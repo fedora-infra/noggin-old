@@ -7,7 +7,7 @@ api = API(1)
 @api.return_code(200, "Hello")
 @api.no_client_auth
 @api.no_user_auth
-def index():
+def index(ldap_client):
     return {"message": "Greetings"}
 
 @api
@@ -17,7 +17,7 @@ def index():
 @api.paged
 @api.no_client_auth
 @api.user_auth('testscope')
-def ping(name, user, page, perpage):
+def ping(ldap_client, name, user, page, perpage):
     return {
         "message": "Greetings, %s. CAIAPI says hi!" % name,
         "page": page,
