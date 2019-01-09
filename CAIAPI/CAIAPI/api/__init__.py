@@ -77,6 +77,10 @@ class API(object):
         apifunc.add_paging()
 
     @wrapperfunc_noargs
+    def client_auth(self, apifunc):
+        apifunc.client_auth = True
+
+    @wrapperfunc_noargs
     def no_client_auth(self, apifunc):
         apifunc.client_auth = False
 

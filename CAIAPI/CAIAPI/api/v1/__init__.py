@@ -15,7 +15,7 @@ def index(ldap):
 @api.return_code(200, "Hello")
 @api.argument('name', 'User name to say hello to')
 @api.paged
-@api.no_client_auth
+@api.client_auth
 @api.user_auth('testscope')
 def ping(ldap, name, page, perpage):
     return {

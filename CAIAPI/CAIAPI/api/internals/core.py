@@ -161,6 +161,9 @@ class APIFunc(object):
         if self.user_auth is not False:
             self.middlewares.append(UserAuthMiddleware(self.user_auth))
 
+        if self.client_auth is not False:
+            self.middlewares.append(ClientAuthMiddleware())
+
         if self.arguments:
             self.middlewares.append(ArgumentMiddleware(self.arguments))
 

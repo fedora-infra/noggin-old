@@ -82,6 +82,7 @@ def run():
         "client_secret": oidc["client_secret"],
     }
     client = CAIClient(server,
+                       client_info={"name": "caiclient", "secret": "foobar"},
                        api_version=apiver,
                        oidc_client_info=oidc_client_info)
 
