@@ -2,6 +2,7 @@ from base64 import b64decode
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, hmac
 from flask import request, g
+import threading
 import secrets
 
 from CAIAPI.api.internals.exceptions import (
@@ -15,6 +16,19 @@ from CAIAPI.oidc import oidc
 
 AUTH_HDRS        = {'WWW-Authenticate': 'Bearer'}
 AUTH_CLIENT_HDRS = {'WWW-Authenticate': 'CAIAPI-Client'}
+
+# We generate a random key per thread. This key is used for unknown clients to
+# prevent a timing side-channel. We generate one randomly per thread so that
+# an attacker can't just brute-force to find the server key, but we also don't
+# generate it per request, since generating random bytes takes time.
+class ThreadKeys(threading.local):
+    def __getattr__(self, key):
+        if key == 'unknown_client_key':
+            self.unknown_client_key = secrets.token_bytes(3)
+            return self.unknown_client_key
+        raise AttributeError("No %s attribute" % key)
+
+threadkeys = ThreadKeys()
 
 
 def get_request_oauth_token():
@@ -77,11 +91,13 @@ class ClientAuthMiddleware(Middleware):
         digest = b64decode(digest)
 
         client_cfg = APP.config['CLIENTS'].get(client_name)
-        client_key = None
-        if client_cfg is None:
-            # Try to avoid a time difference by generating a random key
-            client_key = secrets.token_bytes(32)
-        else:
+        # Try to avoid a timing sidechannel by using a random, thread-local
+        # secret to compare the signature with. For information on this,
+        # see the code on top of this file that generates it.
+        # We set it here always so that even the first access
+        #  (which generates the key) doesn't leak timing.
+        client_key = threadkeys.unknown_client_key
+        if client_cfg is not None:
             client_key = client_cfg['secret'].encode('utf-8')
         token = get_request_oauth_token()
 
@@ -101,14 +117,22 @@ class ClientAuthMiddleware(Middleware):
         try:
             h.verify(digest)
         except Exception as ex:
-            raise APIUnauthorizedError("Client authentication failed: %s" % ex,
+            raise APIUnauthorizedError("Client authentication failed for "
+                                       "%s (existed: %s): %s"
+                                       % (client_name,
+                                          client_cfg is not None,
+                                          ex),
                                        headers=AUTH_CLIENT_HDRS)
 
         if client_cfg is None:
             # This should not happen except for the INCREDIBLY rare case where
             #  *somehow* the client managed to produce a signature with the
-            #  exact same random key....
-            raise APIUnauthorizedError("Client authentication failed...")
+            #  exact same random key as we happened to generate for this
+            #  thread....
+            # Theoretically, this is a 1 in 2^256 chance...
+            raise APIUnauthorizedError("Client authentication against random "
+                                       "key succeeded... Someone needs to go "
+                                       "buy a lottery ticket...")
 
         # Strip "secret" so there's no chance of leaking it
         return {"client_info": {key: client_cfg[key]
