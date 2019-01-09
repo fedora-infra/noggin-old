@@ -2,6 +2,7 @@ from base64 import b64decode
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, hmac
 from flask import request, g
+import secrets
 
 from CAIAPI.api.internals.exceptions import (
     APIUnauthorizedError,
@@ -79,12 +80,11 @@ class ClientAuthMiddleware(Middleware):
         client_key = None
         if client_cfg is None:
             # Try to avoid a time difference by generating a random key
-            # TODO: Generate random secret (SECURITY SENSITIVE: MUST BE RANDOM)
-            client_key = ''
+            client_key = secrets.token_bytes(32)
         else:
-            client_key = client_cfg['secret']
+            client_key = client_cfg['secret'].encode('utf-8')
 
-        h = hmac.HMAC(client_key.encode('utf-8'),
+        h = hmac.HMAC(client_key,
                       get_hash_from_name(hashmethod),
                       backend=default_backend())
         h.update(request.path.encode('utf-8'))
@@ -103,6 +103,12 @@ class ClientAuthMiddleware(Middleware):
         except Exception as ex:
             raise APIUnauthorizedError("Client authentication failed: %s" % ex,
                                        headers=AUTH_CLIENT_HDRS)
+
+        if client_cfg is None:
+            # This should not happen except for the INCREDIBLY rare case where
+            #  *somehow* the client managed to produce a signature with the
+            #  exact same random key....
+            raise APIUnauthorizedError("Client authentication failed...")
 
         # Strip "secret" so there's no chance of leaking it
         return {"client_info": {key: client_cfg[key]
