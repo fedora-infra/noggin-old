@@ -83,6 +83,7 @@ class ClientAuthMiddleware(Middleware):
             client_key = secrets.token_bytes(32)
         else:
             client_key = client_cfg['secret'].encode('utf-8')
+        token = get_request_oauth_token()
 
         h = hmac.HMAC(client_key,
                       get_hash_from_name(hashmethod),
@@ -91,7 +92,6 @@ class ClientAuthMiddleware(Middleware):
         h.update(b'_')
         h.update(request.method.lower().encode('utf-8'))
         h.update(b'_')
-        token = get_request_oauth_token()
         if token:
             h.update(token.encode('utf-8'))
         else:
