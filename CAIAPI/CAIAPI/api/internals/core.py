@@ -96,6 +96,7 @@ def generate_viewfunc(final_viewfunc, middlewares):
 
         # Build the LDAP client
         ldap_client = LdapClient(
+            APP.logger,
             kwargs.get('user_tokeninfo'),
             kwargs.get('client_info'),
         )

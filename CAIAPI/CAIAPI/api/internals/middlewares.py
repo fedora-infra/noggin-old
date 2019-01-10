@@ -1,10 +1,15 @@
 from flask import request
 
 
+from CAIAPI import APP
 from CAIAPI.api.internals.exceptions import APIInvalidRequest, APICodingError
 
 
 class Middleware(object):
+    @property
+    def logger(self):
+        return APP.logger
+
     def request_infos(self):
         return {}
 
