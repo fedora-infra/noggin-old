@@ -5,12 +5,7 @@ import threading
 
 from CAIAPI import APP
 
-from ipalib import krb_utils
-
 ldapcache = threading.local()
-
-import os
-os.environ["KRB5_TRACE"]="/dev/stderr"
 
 def get_connection():
     if not hasattr(ldapcache, 'connection'):
