@@ -25,8 +25,6 @@ def get_connection():
                 keytab=APP.config['KRB5_KEYTAB'],
                 ccache_name=ccache,
             )
-            princ = krb_utils.get_principal()
-            APP.logger.info("Principal: %s" % princ)
             conn.gssapi_bind()
 
         ldapcache.connection = conn
