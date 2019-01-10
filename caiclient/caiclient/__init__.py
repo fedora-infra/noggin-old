@@ -70,6 +70,7 @@ class CAIClient(object):
         )
         # Perform request
         resp = requests.request(method, url, **kwargs)
+        rcodes = [int(code) for code in operinfo['return_codes'].keys()]
         if resp.status_code == 401:
             authhdr = resp.headers.get("WWW-Authenticate")
             if authhdr == 'CAIAPI-Client':
@@ -86,7 +87,8 @@ class CAIClient(object):
         elif resp.status_code == 500:
             # TODO: Fix exception type
             raise Exception("Error calling API: %s" % resp.json())
-        elif resp.status_code not in operinfo['return_codes'].keys():
+        elif resp.status_code not in rcodes:
+            raise Exception( operinfo['return_codes'].keys())
             # TODO: Fix exception type
-            raise ValueError("API returned an unexpected return code!")
+            raise ValueError("API returned an unexpected return code: %d!")
         return resp.json()
