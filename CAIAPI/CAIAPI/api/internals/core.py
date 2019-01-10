@@ -304,5 +304,10 @@ def register_to_blueprint(blueprint, route, methods_to_apifunc):
 
 
 def extend_scopes(scopes):
-    return ["%s/%s" % (APP.config["OIDC_SCOPE_PREFIX"], scope)
-            for scope in scopes]
+    new_scopes = []
+    for scope in scopes:
+        if scope.startswith('/'):
+            new_scopes.append(APP.config['OIDC_SCOPE_PREFIX'] + scope)
+        else:
+            new_scopes.append(scope)
+    return new_scopes

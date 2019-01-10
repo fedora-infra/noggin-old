@@ -16,11 +16,19 @@ def index(ldap):
 @api.argument('name', 'User name to say hello to')
 @api.paged
 @api.client_auth
-@api.user_auth('testscope')
+@api.user_auth('/testscope')
 def ping(log, ldap, name, page, perpage):
-    return {
-        "message": "Greetings, %s. CAIAPI says hi!" % name,
-        "page": page,
-        "perpage": perpage,
-        "numpages": 42,
-    }
+    if page == 1:
+        return {
+            "message": "Greetings, %s. CAIAPI says hi!" % name,
+            "page": page,
+            "perpage": perpage,
+            "numpages": 2,
+        }
+    else:
+        return {
+            "message": "Greetings, %s. CAIAPI greets you!" % name,
+            "page": page,
+            "perpage": perpage,
+            "numpages": 2,
+        }
