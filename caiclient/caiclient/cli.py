@@ -10,8 +10,9 @@ from caiclient import CAIClient
 def run_operation_method(client, args):
     method = args.pop("method")
     operation = args.pop("operation")
+    page = args.pop("page")
     args.pop("func")
-    resp = client(operation, method, args)
+    resp = client(operation, method, args, page=page)
     print("Return value: %s" % resp)
 
 
@@ -88,6 +89,7 @@ def run():
                        oidc_client_info=oidc_client_info)
 
     main_parser = ArgumentParser(description='CAIClient')
+    main_parser.add_argument("--page", type=int, help="The page to request")
     generate_subparsers(client,
                         main_parser,
                         client.api_definition["operations"])
