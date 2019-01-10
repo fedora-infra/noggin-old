@@ -82,10 +82,13 @@ def run():
         "client_id": oidc["client_id"],
         "client_secret": oidc["client_secret"],
     }
+    client_info = {
+        "name": "caiclient",
+        "secret": "7d059afbfdc3dde56aa69fe5fc9ae2408ff361cd7453d15ceb07eba6e99cb1bc"
+    }
     client = CAIClient(server,
-                       client_info={"name": "caiclient",
-                                    "secret": "7d059afbfdc3dde56aa69fe5fc9ae2408ff361cd7453d15ceb07eba6e99cb1bc"},
                        api_version=apiver,
+                       client_info=client_info,
                        oidc_client_info=oidc_client_info)
 
     main_parser = ArgumentParser(description='CAIClient')
