@@ -6,6 +6,7 @@ EXPOSE 80/tcp
 EXPOSE 443/tcp
 RUN dnf install -y python3-flask httpd mod_ssl python3-flask-oidc python3-ldap python3-ipalib
 RUN rm -f /etc/httpd/conf.d/*
+COPY common/krb5.conf /etc/krb5.conf
 COPY common/ipa-cert-install /usr/local/bin/ipa-cert-install
 COPY CAIAPI/run /usr/local/bin/run
 COPY CAIAPI/ssl.conf /etc/httpd/conf.d/ssl.conf

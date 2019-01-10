@@ -1,10 +1,22 @@
 from binascii import a2b_hex
 from cryptography.hazmat.primitives import hashes
 
+
 def check_config(app):
     errors = []
     if not app.config['OIDC_CLIENT_SECRETS']:
         errors.append("Configure OpenID Connect client secrets")
+
+    if not app.config['LDAP_SERVER']:
+        errors.append("Configure LDAP server")
+    #elif not app.config['LDAP_SERVER'].startswith('ldaps://'):
+    #    errors.append("Use ldaps:// to access ldap")
+    if not app.config['KRB5_REALM']:
+        errors.append("Configure kerberos realm")
+    if not app.config['KRB5_PRINCIPAL']:
+        errors.append("Configure kerberos user principal")
+    if not app.config['KRB5_KEYTAB']:
+        errors.append("Configure kerberos user keytab")
 
     # We make sure that all client secrets are long enough for at least the
     # shortest hash algorithm we support per RFC2104:
