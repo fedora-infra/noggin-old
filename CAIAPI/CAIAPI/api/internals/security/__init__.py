@@ -152,6 +152,4 @@ class ClientAuthMiddleware(Middleware):
                                        "buy a lottery ticket...")
 
         # Strip "secret" so there's no chance of leaking it
-        return {"client_info": {key: client_cfg[key]
-                                for key in client_cfg
-                                if key != 'secret'}}
+        return {"client_info": client_cfg['info']}
