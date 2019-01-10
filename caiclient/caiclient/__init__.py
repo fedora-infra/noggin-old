@@ -1,4 +1,5 @@
 from base64 import b64encode
+from binascii import a2b_hex
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, hmac
 import json
@@ -20,7 +21,10 @@ class CAIClient(object):
         return self.oidc_client.get_token(required_scopes)
 
     def sign_request(self, url, method, token, req):
-        h = hmac.HMAC(self.client_info['secret'].encode('utf-8'),
+        secret = self.client_info['secret']
+        if isinstance(secret, str):
+            secret = a2b_hex(secret)
+        h = hmac.HMAC(secret,
                       hashes.SHA256(),
                       backend=default_backend())
         h.update(url.encode('utf-8'))

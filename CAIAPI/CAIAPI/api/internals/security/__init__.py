@@ -1,4 +1,5 @@
 from base64 import b64decode
+from binascii import a2b_hex
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, hmac
 from flask import request, g
@@ -98,7 +99,7 @@ class ClientAuthMiddleware(Middleware):
         #  (which generates the key) doesn't leak timing.
         client_key = threadkeys.unknown_client_key
         if client_cfg is not None:
-            client_key = client_cfg['secret'].encode('utf-8')
+            client_key = a2b_hex(client_cfg['secret'])
         token = get_request_oauth_token()
 
         h = hmac.HMAC(client_key,
