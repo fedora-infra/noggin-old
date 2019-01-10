@@ -1,5 +1,4 @@
 from base64 import b64decode
-from binascii import a2b_hex
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, hmac
 from flask import request, g
@@ -89,6 +88,7 @@ class ClientAuthMiddleware(Middleware):
             raise APIUnauthorizedError("Invalid signature header format",
                                        headers=AUTH_CLIENT_HDRS)
         hashmethod, digest = client_sig.rsplit(':', 1)
+        hashmethod = get_hash_from_name(hashmethod)
         digest = b64decode(digest)
 
         client_cfg = APP.config['CLIENTS'].get(client_name)
@@ -99,11 +99,20 @@ class ClientAuthMiddleware(Middleware):
         #  (which generates the key) doesn't leak timing.
         client_key = threadkeys.unknown_client_key
         if client_cfg is not None:
-            client_key = a2b_hex(client_cfg['secret'])
+            # Decoding from hex to binary is done by check_config
+            client_key = client_cfg['secret']
+            if len(client_key) < hashmethod.digest_size:
+                # check_config makes sure that the client is at least able to
+                # use any signing method, but the client might have tried to
+                # use a hash method their secret is too short for.
+                APP.logger.warning("Client secret for %s too short, "
+                                   "auth will fail",
+                                   client_name)
+                client_key = threadkeys.unknown_client_key
         token = get_request_oauth_token()
 
         h = hmac.HMAC(client_key,
-                      get_hash_from_name(hashmethod),
+                      hashmethod,
                       backend=default_backend())
         h.update(request.path.encode('utf-8'))
         h.update(b'_')

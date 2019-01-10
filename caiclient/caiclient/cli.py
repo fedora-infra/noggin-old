@@ -83,7 +83,7 @@ def run():
     }
     client = CAIClient(server,
                        client_info={"name": "caiclient",
-                                    "secret": "0123456789abcdef"},
+                                    "secret": "7d059afbfdc3dde56aa69fe5fc9ae2408ff361cd7453d15ceb07eba6e99cb1bc"},
                        api_version=apiver,
                        oidc_client_info=oidc_client_info)
 
