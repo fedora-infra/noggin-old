@@ -31,6 +31,30 @@ echo "noggindev" | kinit admin@NOGGINDEV.LOCAL
 CERTSWAITING=()
 
 
+function createkeytab() {
+	hostname=$1
+	service=$2
+	location=$3
+
+	echo "Creating keytab for $service/$hostname..."
+
+	echo "Creating $hostname host entry..."
+	ipa host-add \
+		$hostname.noggindev.local \
+		--force || echo "Probably already existed"
+
+	echo "Creating $service/$hostname service entry..."
+	ipa service-add \
+		$service/$hostname.noggindev.local \
+		--force || echo "Probably already existed"
+
+	echo "Creating keytab for $service/$hostname..."
+	ipa-getkeytab \
+		--keytab $location \
+		--principal $service/$hostname.noggindev.local
+}
+
+
 function requestcert() {
 	name=$1
 	hostname=$2
@@ -72,6 +96,7 @@ fi
 
 if [ ! -f /data/caiapi-noggin/ipa-done ];
 then
+	createkeytab "caiapi" "CAIAPI" "/data/caiapi-noggin/caiapikeytab"
 	requestcert "caiapicert" "caiapi" "/data/caiapi-noggin/caiapicert"
 	requestcert "noggincert" "noggin" "/data/caiapi-noggin/noggincert"
 	CERTSWAITING+=('/data/caiapi-noggin/caiapicert.pem')
