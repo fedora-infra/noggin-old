@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify
 import inspect
-import logging
 
 
 from CAIAPI import APP
@@ -76,22 +75,23 @@ def generate_viewfunc(final_viewfunc, middlewares):
         accepted_kwargs.append(param.name)
 
     def caller():
-        intermediates = []
-        kwargs = {}
+        kwargs = {
+            "log": APP.logger,
+        }
 
         for middleware in middlewares:
             output = middleware.request_infos()
             if output:
-                logging.debug("Middleware %s generated kwargs: %s",
-                              middleware,
-                              output)
+                APP.logger.debug("Middleware %s generated kwargs: %s",
+                                 middleware,
+                                 output)
                 kwargs.update(output)
 
             result = middleware.intermediate_viewfunc()
             if result is not None:
-                logging.debug("Middleware %s returned: %s",
-                              middleware,
-                              result)
+                APP.logger.debug("Middleware %s returned: %s",
+                                 middleware,
+                                 result)
                 return result
 
         # Build the LDAP client
@@ -101,18 +101,15 @@ def generate_viewfunc(final_viewfunc, middlewares):
         )
         kwargs['ldap'] = ldap_client
 
-        logging.debug("Got args %s for viewfunc %s pre-filter",
-                      kwargs,
-                      final_viewfunc)
+        APP.logger.debug("Got args %s for viewfunc %s pre-filter",
+                         kwargs,
+                         final_viewfunc)
 
         kwargs = {key: kwargs[key] for key in kwargs if key in accepted_kwargs}
-        for argname in kwargs:
-            if argname not in accepted_kwargs:
-                del kwargs[argname]
 
-        logging.debug("Calling final viewfunc %s with args %s",
-                      final_viewfunc,
-                      kwargs)
+        APP.logger.debug("Calling final viewfunc %s with args %s",
+                         final_viewfunc,
+                          kwargs)
         resp = final_viewfunc(**kwargs)
 
         headers = {}
@@ -122,11 +119,12 @@ def generate_viewfunc(final_viewfunc, middlewares):
             if new_resp and isinstance(new_resp, tuple):
                 new_resp, extra_headers = new_resp
             if new_resp is not None:
-                logging.debug("Middleware %s manipulated response" % middleware)
+                APP.logger.debug("Middleware %s manipulated response",
+                                 middleware)
                 resp = new_resp
             if extra_headers is not None:
-                logging.debug("Middleware %s added headers: %s",
-                              middleware, extra_headers)
+                APP.logger.debug("Middleware %s added headers: %s",
+                                 middleware, extra_headers)
                 headers.update(extra_headers)
 
         return resp, headers
@@ -249,20 +247,20 @@ def error_handler(func):
             resp.headers.extend(headers)
             return resp
         except APICodingError:
-            logging.exception("API Coding error occured")
+            APP.logger.exception("API Coding error occured")
             return jsonify({
                 'success': False,
                 'error': 'Internal coding error',
             }), 500
         except APIError as err:
-            logging.warning("API error occured, code: %s, msg: %s",
-                            err.code,
-                            err.internal or err.message)
+            APP.logger.warning("API error occured, code: %s, msg: %s",
+                               err.code,
+                               err.internal or err.message)
             response = {'success': False,
                         'error': err.message}
             return jsonify(response), err.code, err.headers
         except Exception:
-            logging.exception("Unexpected error during request processing")
+            APP.logger.exception("Unexpected error during request processing")
             return jsonify({
                 'success': False,
                 'error': 'Internal server error',

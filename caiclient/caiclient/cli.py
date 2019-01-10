@@ -51,7 +51,7 @@ def generate_special_parser(client, parser):
     # full_authorize
     full_authorize_parser = subparsers.add_parser(
         "full_authorize",
-       help="Get token for all operations")
+        help="Get token for all operations")
     full_authorize_parser.set_defaults(func=full_authorize)
 
 

@@ -17,7 +17,7 @@ def index(ldap):
 @api.paged
 @api.client_auth
 @api.user_auth('testscope')
-def ping(ldap, name, page, perpage):
+def ping(log, ldap, name, page, perpage):
     return {
         "message": "Greetings, %s. CAIAPI says hi!" % name,
         "page": page,

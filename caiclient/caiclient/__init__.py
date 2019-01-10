@@ -83,5 +83,10 @@ class CAIClient(object):
                 resp.raise_for_status()
             return self(operation, method, args, check_validity=False,
                         is_retry=True)
-        resp.raise_for_status()
+        elif resp.status_code == 500:
+            # TODO: Fix exception type
+            raise Exception("Error calling API: %s" % resp.json())
+        elif resp.status_code not in operinfo['return_codes'].keys():
+            # TODO: Fix exception type
+            raise ValueError("API returned an unexpected return code!")
         return resp.json()
