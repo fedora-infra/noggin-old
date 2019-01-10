@@ -93,6 +93,10 @@ class ClientAuthMiddleware(Middleware):
         hashmethod = get_hash_from_name(hashname)
         digest = b64decode(digest)
 
+        if len(digest) != hashmethod.digest_size:
+            raise APIUnauthorizedError("Invalid signature length for hash",
+                                       headers=AUTH_CLIENT_HDRS)
+
         client_cfg = APP.config['CLIENTS'].get(client_name)
         # Try to avoid a timing sidechannel by using a random, thread-local
         # secret to compare the signature with. For information on this,
