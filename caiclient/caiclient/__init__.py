@@ -88,7 +88,6 @@ class CAIClient(object):
             # TODO: Fix exception type
             raise Exception("Error calling API: %s" % resp.json())
         elif resp.status_code not in rcodes:
-            raise Exception( operinfo['return_codes'].keys())
             # TODO: Fix exception type
             raise ValueError("API returned an unexpected return code: %d!")
         return resp.json()
