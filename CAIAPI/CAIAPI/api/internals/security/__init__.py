@@ -24,7 +24,7 @@ AUTH_CLIENT_HDRS = {'WWW-Authenticate': 'CAIAPI-Client'}
 class ThreadKeys(threading.local):
     def __getattr__(self, key):
         if key == 'unknown_client_key':
-            self.unknown_client_key = secrets.token_bytes(3)
+            self.unknown_client_key = secrets.token_bytes(32)
             return self.unknown_client_key
         raise AttributeError("No %s attribute" % key)
 
