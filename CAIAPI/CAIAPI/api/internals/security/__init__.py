@@ -67,6 +67,8 @@ def get_hash_from_name(hash_name):
     hash_name = hash_name.lower()
     if hash_name == 'sha256':
         return hashes.SHA256()
+    elif hash_name == 'sha512':
+        return hashes.SHA512()
     # Add additionally supported hash methods here
     else:
         raise APIUnauthorizedError("Invalid signature header hash method")
@@ -107,8 +109,8 @@ class ClientAuthMiddleware(Middleware):
                 # use a hash method their secret is too short for.
                 APP.logger.warning("Client secret for %s too short for hash "
                                    "algorithm %s, auth will fail",
-                                   hashname,
-                                   client_name)
+                                   client_name,
+                                   hashname)
                 client_key = threadkeys.unknown_client_key
         token = get_request_oauth_token()
 
