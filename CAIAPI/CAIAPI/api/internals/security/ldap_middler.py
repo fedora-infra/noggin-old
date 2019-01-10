@@ -1,6 +1,5 @@
 from ipapython import ipaldap
 import threading
-import logging
 
 
 ldapcache = threading.local()
