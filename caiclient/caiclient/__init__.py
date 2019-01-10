@@ -40,8 +40,8 @@ class CAIClient(object):
         sig = b64encode(h.finalize())
         return 'sha256:%s' % sig.decode('utf-8')
 
-    def __call__(self, operation, method, args, check_validity=True,
-                 is_retry=False):
+    def __call__(self, operation, method, args, page=None, all_pages=False,
+                 check_validity=True, is_retry=False):
         operinfo = self.api_definition["operations"][operation][method]
         for arg in operinfo["arguments"]:
             if arg["required"] and arg["name"] not in args:
@@ -53,6 +53,8 @@ class CAIClient(object):
         url = "%s%s" % (self.baseurl, relurl)
         method = method.upper()
         kwargs = {"headers": {}}
+        if page:
+            kwargs["headers"]["X-CAIAPI-Page"] = str(page)
         if method not in ("GET", "HEAD"):
             kwargs["data"] = json.dumps(args)
             kwargs["headers"]["Content-Type"] = "application/json"
@@ -87,7 +89,7 @@ class CAIClient(object):
         elif resp.status_code == 500:
             # TODO: Fix exception type
             raise Exception("Error calling API: %s" % resp.json())
-        elif resp.status_code not in rcodes:
+        elif check_validity and resp.status_code not in rcodes:
             # TODO: Fix exception type
             raise ValueError("API returned an unexpected return code: %d!")
         return resp.json()

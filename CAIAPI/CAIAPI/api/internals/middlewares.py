@@ -46,8 +46,9 @@ class PagingMiddleware(Middleware):
     PERPAGE_MAX = 250
 
     def request_infos(self):
-        page = request.args.get("page", 1)
-        perpage = request.args.get("perpage", PagingMiddleware.PERPAGE_DEFAULT)
+        page = request.headers.get("X-CAIAPI-Page", 1)
+        perpage = request.headers.get("X-CAIAPI-PerPage",
+                                      PagingMiddleware.PERPAGE_DEFAULT)
         try:
             page = int(page)
         except ValueError:
