@@ -87,8 +87,8 @@ class ClientAuthMiddleware(Middleware):
         if ':' not in client_sig:
             raise APIUnauthorizedError("Invalid signature header format",
                                        headers=AUTH_CLIENT_HDRS)
-        hashmethod, digest = client_sig.rsplit(':', 1)
-        hashmethod = get_hash_from_name(hashmethod)
+        hashname, digest = client_sig.rsplit(':', 1)
+        hashmethod = get_hash_from_name(hashname)
         digest = b64decode(digest)
 
         client_cfg = APP.config['CLIENTS'].get(client_name)
@@ -105,8 +105,9 @@ class ClientAuthMiddleware(Middleware):
                 # check_config makes sure that the client is at least able to
                 # use any signing method, but the client might have tried to
                 # use a hash method their secret is too short for.
-                APP.logger.warning("Client secret for %s too short, "
-                                   "auth will fail",
+                APP.logger.warning("Client secret for %s too short for hash "
+                                   "algorithm %s, auth will fail",
+                                   hashname,
                                    client_name)
                 client_key = threadkeys.unknown_client_key
         token = get_request_oauth_token()
