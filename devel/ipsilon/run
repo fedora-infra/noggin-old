@@ -17,7 +17,7 @@ then
 		--openidc yes \
 		--openidc-extensions ipsilon,caiapi \
 		--ldap yes \
-		--ldap-server-url "ldaps://ipa.noggindev.local:636/" \
+		--ldap-server-url "ldaps://ipa.noggindev.test:636/" \
 		--ldap-tls-level Demand \
 		--ldap-base-dn "dc=noggindev,dc=local" \
 		--ldap-bind-dn-template "uid=%(username)s,cn=users,cn=accounts,dc=noggindev,dc=local"

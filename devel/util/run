@@ -7,9 +7,9 @@ if [ ! -f /tmp/enrolled ];
 then
 	echo "Enrolling into IPA..."
 	ipa-client-install \
-		--server=ipa.noggindev.local \
-		--domain=noggindev.local \
-		--realm=NOGGINDEV.LOCAL \
+		--server=ipa.noggindev.test \
+		--domain=noggindev.test \
+		--realm=NOGGINDEV.TEST \
 		--force-join \
 		--principal=admin \
 		-w noggindev \
@@ -25,7 +25,7 @@ then
 fi
 	
 echo "Getting krb5 ticket..."
-echo "noggindev" | kinit admin@NOGGINDEV.LOCAL
+echo "noggindev" | kinit admin@NOGGINDEV.TEST
 
 
 CERTSWAITING=()
@@ -40,18 +40,18 @@ function createkeytab() {
 
 	echo "Creating $hostname host entry..."
 	ipa host-add \
-		$hostname.noggindev.local \
+		$hostname.noggindev.test \
 		--force || echo "Probably already existed"
 
 	echo "Creating $service/$hostname service entry..."
 	ipa service-add \
-		$service/$hostname.noggindev.local \
+		$service/$hostname.noggindev.test \
 		--force || echo "Probably already existed"
 
 	echo "Creating keytab for $service/$hostname..."
 	ipa-getkeytab \
 		--keytab $location \
-		--principal $service/$hostname.noggindev.local
+		--principal $service/$hostname.noggindev.test
 }
 
 
@@ -64,27 +64,27 @@ function requestcert() {
 
 	echo "Creating $hostname host entry..."
 	ipa host-add \
-		$hostname.noggindev.local \
+		$hostname.noggindev.test \
 		--force || echo "Probably already existed"
 
 	echo "Creating HTTP/$hostname service..."
 	ipa service-add \
-		HTTP/$hostname.noggindev.local \
+		HTTP/$hostname.noggindev.test \
 		--force || echo "Probably already existed"
 
 	echo "Granting us permissions to request HTTP/$hostname cert..."
 	ipa service-add-host \
-		HTTP/$hostname.noggindev.local \
-		--hosts=util.noggindev.local || echo "Probably already existed"
+		HTTP/$hostname.noggindev.test \
+		--hosts=util.noggindev.test || echo "Probably already existed"
 
 	echo "Requesting HTTP/$hostname certificate..."
 	ipa-getcert request \
 		-k ${location}.key \
 		-f ${location}.pem \
 		-I $name \
-		-K HTTP/$hostname.noggindev.local \
-		-N "CN=$hostname.noggindev.local,O=noggindev" \
-		-D $hostname.noggindev.local
+		-K HTTP/$hostname.noggindev.test \
+		-N "CN=$hostname.noggindev.test,O=noggindev" \
+		-D $hostname.noggindev.test
 }
 
 
@@ -108,9 +108,9 @@ function register_oidc() {
 	out_file="$2"
 
 	oidc-register \
-		https://ipsilon.noggindev.local/openidc/ \
-		https://${apphost}.noggindev.local/ \
-		--token-introspection-uri https://ipsilon.noggindev.local/openidc/TokenInfo \
+		https://ipsilon.noggindev.test/openidc/ \
+		https://${apphost}.noggindev.test/ \
+		--token-introspection-uri https://ipsilon.noggindev.test/openidc/TokenInfo \
 		--output-file $out_file
 }
 
@@ -148,7 +148,7 @@ touch /data/ipsilon/ipa-done
 touch /data/caiapi-noggin/ipa-done
 
 echo "Waiting for Ipsilon to come up..."
-until (curl -qf http://ipsilon.noggindev.local/ >dev/null 2>&1)
+until (curl -qf http://ipsilon.noggindev.test/ >dev/null 2>&1)
 do
 	echo "Waiting for Ipsilon to start..."
 	sleep 10
@@ -164,7 +164,7 @@ fi
 if [ ! -f /data/caiapi-noggin/caiclient_done ];
 then
 	echo "Performing manual registrations..."
-	/usr/local/bin/manual_reg "https://ipsilon.noggindev.local/openidc/" "/data/caiapi-noggin/caiclient_client.json" "http://localhost:12345/" "http://localhost:23456/"
+	/usr/local/bin/manual_reg "https://ipsilon.noggindev.test/openidc/" "/data/caiapi-noggin/caiclient_client.json" "http://localhost:12345/" "http://localhost:23456/"
 fi
 
 echo "Marking all parts are ready..."

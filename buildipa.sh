@@ -12,5 +12,5 @@ docker-compose \
 	--no-ssh --no-sshd --no-dns-sshfp \
 	--ds-password noggindev \
 	--admin-password noggindev \
-	--domain noggindev.local \
-	--realm NOGGINDEV.LOCAL
+	--domain noggindev.test \
+	--realm NOGGINDEV.TEST

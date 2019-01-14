@@ -10,8 +10,8 @@ services:
     volumes:
     - "ipa-data:/data:Z"
     - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-    - "${PWD}/extensions/ipa/99caiapi.ldif:/data/etc/dirsrv/slapd-NOGGINDEV-LOCAL/schema/99caiapi.ldif:z,ro"
-    hostname: ipa.noggindev.local
+    - "${PWD}/extensions/ipa/99caiapi.ldif:/data/etc/dirsrv/slapd-NOGGINDEV-TEST/schema/99caiapi.ldif:z,ro"
+    hostname: ipa.noggindev.test
     command: 
     - "--unattended"
   util:
@@ -22,33 +22,33 @@ services:
     - "ipsilon-data:/data/ipsilon:z"
     - "caiapi-noggin-data:/data/caiapi-noggin:z"
     - "./caiclient:/code/caiclient:z,ro"
-    hostname: util.noggindev.local
+    hostname: util.noggindev.test
     links:
-    - "ipa:ipa.noggindev.local"
-    - "ipsilon:ipsilon.noggindev.local"
-    - "caiapi:caiapi.noggindev.local"
-    - "noggin:noggin.noggindev.local"
+    - "ipa:ipa.noggindev.test"
+    - "ipsilon:ipsilon.noggindev.test"
+    - "caiapi:caiapi.noggindev.test"
+    - "noggin:noggin.noggindev.test"
   ipsilon:
     build:
       context: ./devel
       dockerfile: Dockerfile.ipsilon
     healthcheck:
-      test: ["CMD", "curl", "-f", "https://ipsilon.noggindev.local/"]
+      test: ["CMD", "curl", "-f", "https://ipsilon.noggindev.test/"]
       interval: 10s
       timeout: 10s
       retries: 3
     volumes:
     - "ipsilon-data:/data:z"
     - "./extensions/ipsilon:/ipsilon_extensions:z,ro"
-    hostname: ipsilon.noggindev.local
+    hostname: ipsilon.noggindev.test
     links:
-    - "ipa:ipa.noggindev.local"
+    - "ipa:ipa.noggindev.test"
   caiapi:
     build:
       context: ./devel
       dockerfile: Dockerfile.CAIAPI
     healthcheck:
-      test: ["CMD", "curl", "-f", "https://caiapi.noggindev.local/"]
+      test: ["CMD", "curl", "-f", "https://caiapi.noggindev.test/"]
       interval: 10s
       timeout: 10s
       retries: 3
@@ -56,27 +56,27 @@ services:
     - "caiapi-noggin-data:/data:z,ro"
     - "./CAIAPI:/code:z,ro"
     - "${PWD}/devel/CAIAPI/appconfig.cfg:/usr/share/caiapi_static.cfg:z,ro"
-    hostname: caiapi.noggindev.local
+    hostname: caiapi.noggindev.test
     links:
-    - "ipsilon:ipsilon.noggindev.local"
-    - "ipa:ipa.noggindev.local"
+    - "ipsilon:ipsilon.noggindev.test"
+    - "ipa:ipa.noggindev.test"
   noggin:
     build:
       context: ./devel
       dockerfile: Dockerfile.noggin
     healthcheck:
-      test: ["CMD", "curl", "-f", "https://noggin.noggindev.local/"]
+      test: ["CMD", "curl", "-f", "https://noggin.noggindev.test/"]
       interval: 10s
       timeout: 10s
       retries: 3
     volumes:
     - "caiapi-noggin-data:/data:z,ro"
     - "./noggin:/code:z,ro"
-    hostname: noggin.noggindev.local
+    hostname: noggin.noggindev.test
     links:
-    - "ipsilon:ipsilon.noggindev.local"
-    - "caiapi:caiapi.noggindev.local"
-    - "ipa:ipa.noggindev.local"
+    - "ipsilon:ipsilon.noggindev.test"
+    - "caiapi:caiapi.noggindev.test"
+    - "ipa:ipa.noggindev.test"
 volumes:
   ipa-data:
   ipsilon-data:

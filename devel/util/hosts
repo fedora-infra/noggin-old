@@ -3,10 +3,10 @@ import socket
 
 print('Insert into /etc/hosts:')
 print('-----------------------')
-for hostname in ['ipa.noggindev.local',
-                 'ipsilon.noggindev.local',
-                 'caiapi.noggindev.local',
-                 'noggin.noggindev.local']:
+for hostname in ['ipa.noggindev.test',
+                 'ipsilon.noggindev.test',
+                 'caiapi.noggindev.test',
+                 'noggin.noggindev.test']:
     ip = socket.gethostbyname(hostname)
     print('%s    %s' % (ip, hostname))
 print('-----------------------')

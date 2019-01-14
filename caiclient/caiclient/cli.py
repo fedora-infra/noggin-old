@@ -72,11 +72,11 @@ def run():
     # TODO: Implement config for this
     with open("/data/caiapi-noggin/caiclient_client.json", "r") as oidcf:
         oidc = json.loads(oidcf.read())["web"]
-    server = os.getenv("CAICLIENT_SERVER", "https://caiapi.noggindev.local/")
+    server = os.getenv("CAICLIENT_SERVER", "https://caiapi.noggindev.test/")
     apiver = os.getenv("CAICLIENT_API_VERSION")
     oidc_client_info = {
         "app_identifier": "caiclient",
-        "id_provider": "https://ipsilon.noggindev.local/openidc/",
+        "id_provider": "https://ipsilon.noggindev.test/openidc/",
         "id_provider_mapping": {"Token": "Token",
                                 "Authorization": "Authorization"},
         "client_id": oidc["client_id"],

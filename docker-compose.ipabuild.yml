@@ -10,7 +10,7 @@ services:
     volumes:
     - "ipa-data:/data:Z"
     - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-    hostname: ipa.noggindev.local
+    hostname: ipa.noggindev.test
     command: 
     - "--unattended"
 volumes:
