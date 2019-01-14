@@ -19,3 +19,11 @@ Ipsilon, CAIAPI, noggin and a utility container.
 Run `docker-compose exec util myip` to determine the IP address of the utility container.
 You can now connect to VNC on `utilip:5901` with password `noggindev` to access a
 Firefox instance that has access to all the web services.
+
+Run `docker-compose exec util caiclient special full_authorize` to make the caiclient
+on the util container request a token with all scopes that are currently in use.
+Copy the provided Ipsilon URL into the util's VNC browser.
+After doing this, you can run `docker-compose exec util caiclient (rest)` to run any
+caiclient commands.
+
+Example: `docker-compose exec util caiclient ping post Patrick`
