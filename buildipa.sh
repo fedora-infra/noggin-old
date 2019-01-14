@@ -14,3 +14,5 @@ docker-compose \
 	--admin-password noggindev \
 	--domain noggindev.test \
 	--realm NOGGINDEV.TEST
+# Make sure to stop IPA: resuming doesn't quite work
+docker-compose down
