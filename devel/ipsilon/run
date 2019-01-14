@@ -19,8 +19,8 @@ then
 		--ldap yes \
 		--ldap-server-url "ldaps://ipa.noggindev.test:636/" \
 		--ldap-tls-level Demand \
-		--ldap-base-dn "dc=noggindev,dc=local" \
-		--ldap-bind-dn-template "uid=%(username)s,cn=users,cn=accounts,dc=noggindev,dc=local"
+		--ldap-base-dn "dc=noggindev,dc=test" \
+		--ldap-bind-dn-template "uid=%(username)s,cn=users,cn=accounts,dc=noggindev,dc=test"
 
 	echo "Moving httpd config..."
 	mv /etc/httpd/conf.d/ipsilon-root.conf /data/ipsilon-root.conf
