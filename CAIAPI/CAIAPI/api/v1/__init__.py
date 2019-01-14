@@ -23,12 +23,10 @@ def ping(log, ldap, name, page, perpage):
             "message": "Greetings, %s. CAIAPI says hi!" % name,
             "page": page,
             "perpage": perpage,
-            "numpages": 2,
-        }
+        }, {"numpages": 2}
     else:
         return {
             "message": "Greetings, %s. CAIAPI greets you!" % name,
             "page": page,
             "perpage": perpage,
-            "numpages": 2,
-        }
+        }, {"numpages": 2}

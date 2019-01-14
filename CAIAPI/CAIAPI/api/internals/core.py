@@ -111,7 +111,11 @@ def generate_viewfunc(final_viewfunc, middlewares):
         APP.logger.debug("Calling final viewfunc %s with args %s",
                          final_viewfunc,
                          kwargs)
-        resp = final_viewfunc(**kwargs)
+        res = final_viewfunc(**kwargs)
+        resp = {}
+        if isinstance(res, tuple):
+            res, resp = res
+        resp['result'] = res
 
         headers = {}
         for middleware in middlewares:
