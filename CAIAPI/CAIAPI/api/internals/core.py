@@ -110,7 +110,7 @@ def generate_viewfunc(final_viewfunc, middlewares):
 
         APP.logger.debug("Calling final viewfunc %s with args %s",
                          final_viewfunc,
-                          kwargs)
+                         kwargs)
         resp = final_viewfunc(**kwargs)
 
         headers = {}
