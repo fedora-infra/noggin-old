@@ -30,3 +30,12 @@ def ping(log, ldap, name, page, perpage):
             "page": page,
             "perpage": perpage,
         }, {"numpages": 2}
+
+@api
+@api.register('whoami', 'GET')
+@api.return_code(200, 'Hello')
+@api.client_auth
+@api.user_auth('/testscope')
+def whoami(log, ldap):
+    log.info("Whoami called")
+    return str(ldap.current_user.uid)

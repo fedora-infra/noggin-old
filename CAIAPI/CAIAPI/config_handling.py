@@ -9,8 +9,10 @@ def check_config(app):
 
     if not app.config['LDAP_SERVER']:
         errors.append("Configure LDAP server")
-    #elif not app.config['LDAP_SERVER'].startswith('ldaps://'):
-    #    errors.append("Use ldaps:// to access ldap")
+    elif not app.config['LDAP_SERVER'].startswith('ldaps://'):
+        errors.append("Use ldaps:// to access ldap")
+    if not app.config['LDAP_BASE']:
+        errors.append("Configure LDAP base")
     if not app.config['KRB5_REALM']:
         errors.append("Configure kerberos realm")
     if not app.config['KRB5_PRINCIPAL']:

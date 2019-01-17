@@ -10,6 +10,7 @@ KRB5_PRINCIPAL = None
 KRB5_KEYTAB = None
 LDAP_SERVER = None
 LDAP_CACERT = None
+LDAP_REALM = None
 
 # Client definitions
 CLIENTS = {}
