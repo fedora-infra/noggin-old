@@ -36,10 +36,7 @@ class LdapClient(object):
         self._user_token_info = user_token_info
         self._client_info = client_info
         self._logger = logger
-        logger.info("User token: %s" % user_token_info)
-        logger.info("CLient info: %s" % client_info)
-
-        logger.info("Connection: %s" % self._conn)
+        self._user_cache = {}
 
     @property
     def current_user(self):
@@ -48,7 +45,13 @@ class LdapClient(object):
 
     def get_user(self, username):
         """ Get a UserShim object for a user. """
-        return UserShim(self._logger, self._conn, username)
+        if username not in self._user_cache:
+            self._user_cache[username] = UserShim(
+                self._logger,
+                self._conn,
+                username
+            )
+        return self._user_cache[username]
 
 
 class Shim(object):
