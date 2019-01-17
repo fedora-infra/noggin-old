@@ -38,4 +38,4 @@ def ping(log, ldap, name, page, perpage):
 @api.user_auth('/testscope')
 def whoami(log, ldap):
     log.info("Whoami called")
-    return str(ldap.current_user.uid)
+    return ldap.current_user.uid[0]
