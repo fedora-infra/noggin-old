@@ -57,11 +57,15 @@ class Shim(object):
         self._logger = logger
         self._client = client
         self._object_DN = ipaldap.DN(*object_DN, base_dn())
-        logger.info("Object DN: %s", self._object_DN)
         self._object_type = object_type
 
         self._entry = None
         self._activated = False
+
+        logger.debug(
+            "Shim initialized for type %s, DN: %s",
+            self._object_type,
+            self._object_DN)
 
     @property
     def _attrs_read(self):
