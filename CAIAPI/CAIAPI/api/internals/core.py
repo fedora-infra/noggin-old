@@ -74,6 +74,8 @@ def generate_viewfunc(final_viewfunc, middlewares):
 
         accepted_kwargs.append(param.name)
 
+    wants_ldap = 'ldap' in accepted_kwargs
+
     def caller():
         kwargs = {
             "log": APP.logger,
@@ -95,12 +97,13 @@ def generate_viewfunc(final_viewfunc, middlewares):
                 return result
 
         # Build the LDAP client
-        ldap_client = LdapClient(
-            APP.logger,
-            kwargs.get('user_tokeninfo'),
-            kwargs.get('client_info'),
-        )
-        kwargs['ldap'] = ldap_client
+        if wants_ldap:
+            ldap_client = LdapClient(
+                APP.logger,
+                kwargs.get('user_tokeninfo'),
+                kwargs.get('client_info'),
+            )
+            kwargs['ldap'] = ldap_client
 
         APP.logger.debug("Got args %s for viewfunc %s pre-filter",
                          kwargs,
