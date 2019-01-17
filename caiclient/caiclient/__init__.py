@@ -36,7 +36,10 @@ class CAIClient(object):
         else:
             h.update(b'NOUSER')
         h.update(b'_')
-        h.update(req.encode('utf-8'))
+        if req:
+            h.update(req.encode('utf-8'))
+        else:
+            h.update(b'NOREQ')
         sig = b64encode(h.finalize())
         return 'sha256:%s' % sig.decode('utf-8')
 

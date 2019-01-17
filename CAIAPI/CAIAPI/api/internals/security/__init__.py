@@ -130,7 +130,10 @@ class ClientAuthMiddleware(Middleware):
         else:
             h.update(b'NOUSER')
         h.update(b'_')
-        h.update(request.get_data())
+        if request.get_data():
+            h.update(request.get_data())
+        else:
+            h.update(b'NOREQ')
         try:
             h.verify(digest)
         except Exception as ex:
