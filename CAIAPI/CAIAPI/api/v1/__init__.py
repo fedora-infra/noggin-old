@@ -37,5 +37,6 @@ def ping(log, ldap, name, page, perpage):
 @api.client_auth
 @api.user_auth('/testscope')
 def whoami(log, ldap):
-    log.info("Whoami called")
-    return ldap.current_user.uid[0]
+    return {
+        'uid': ldap.current_user.uid[0],
+    }
