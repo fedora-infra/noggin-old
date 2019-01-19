@@ -31,6 +31,19 @@ def get_thread_ldap_connection():
     return ldapcache.connection
 
 
+# Attempt to pre-initialize at least the primary threads' LDAP conn
+try:
+    # The imports should be ordered such that this can be loaded after the
+    # configuration has been loaded. But if that didn't work for some reason,
+    # that is okay, and we just initialize LDAP on first request to the thread.
+    if APP.config['LDAP_BASE'] is None:
+        raise ValueError("Looks like import order was incorrect")
+    get_thread_ldap_connection()
+    APP.logger.debug("LDAP connection pre-heated for main thread")
+except Exception as ex:
+    APP.logger.info("Pre-heating LDAP connection failed: %s", ex)
+
+
 class LazyLDAPConnection(object):
     def __init__(self):
         self._conn = None

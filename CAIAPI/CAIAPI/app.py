@@ -3,10 +3,6 @@
 import flask
 
 from CAIAPI import APP
-from CAIAPI.api.internals.selfdocumentation import (
-    documentation_viewfunc,
-    documentation_json_viewfunc,
-)
 from CAIAPI.config_handling import check_config
 from CAIAPI.oidc import oidc
 
@@ -16,6 +12,10 @@ oidc.init_app(APP)
 
 check_config(APP)
 
+from CAIAPI.api.internals.selfdocumentation import (
+    documentation_viewfunc,
+    documentation_json_viewfunc,
+)
 from CAIAPI.api.v1 import api as api_v1
 
 APIS = {
