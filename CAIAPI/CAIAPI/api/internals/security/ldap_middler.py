@@ -79,7 +79,8 @@ class LdapClient(object):
             self._user_cache[username] = UserShim(
                 self._logger,
                 self._conn,
-                username
+                username,
+                username == self._user_token_info['sub']
             )
         return self._user_cache[username]
 
@@ -95,7 +96,6 @@ class LdapClient(object):
 
 class Shim(object):
     def __init__(self, logger, client, object_DN, object_type):
-        # TODO: Add the base DN to the end of object_DN
         self._logger = logger
         self._client = client
         self._object_DN = ipaldap.DN(*object_DN, base_dn())
@@ -103,6 +103,7 @@ class Shim(object):
 
         self._entry = None
         self._activated = False
+        self._is_self = False
 
         logger.debug(
             "Shim initialized for type %s, DN: %s",
@@ -178,9 +179,10 @@ class Shim(object):
 
 
 class UserShim(Shim):
-    def __init__(self, logger, client, username):
+    def __init__(self, logger, client, username, is_self):
         user_dn = [('uid', username), ('cn', 'users'), ('cn', 'accounts')]
         super().__init__(logger, client, user_dn, 'user')
+        self._is_self = is_self
 
 
 class GroupShim(Shim):
