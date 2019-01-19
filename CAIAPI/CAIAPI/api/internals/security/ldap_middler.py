@@ -66,6 +66,7 @@ class LdapClient(object):
         self._client_info = client_info
         self._logger = logger
         self._user_cache = {}
+        self._group_cache = {}
 
     @property
     def current_user(self):
@@ -81,6 +82,15 @@ class LdapClient(object):
                 username
             )
         return self._user_cache[username]
+
+    def get_group(self, groupname):
+        if groupname not in self._group_cache:
+            self._group_cache[groupname] = GroupShim(
+                self._logger,
+                self._conn,
+                groupname
+            )
+        return self._group_cache[groupname]
 
 
 class Shim(object):
