@@ -12,25 +12,29 @@ def base_dn():
     return ipaldap.DN(APP.config['LDAP_BASE'])
 
 
+def get_thread_ldap_connection():
+    if not hasattr(ldapcache, 'connection'):
+        conn = ipaldap.LDAPClient(
+            ldap_uri=APP.config['LDAP_SERVER'],
+            cacert=APP.config['LDAP_CACERT'],
+        )
+        with private_ccache() as ccache:
+            kinit_keytab(
+                principal='%s@%s' % (APP.config['KRB5_PRINCIPAL'],
+                                     APP.config['KRB5_REALM']),
+                keytab=APP.config['KRB5_KEYTAB'],
+                ccache_name=ccache,
+            )
+            conn.gssapi_bind()
+
+        ldapcache.connection = conn
+    return ldapcache.connection
+
+
 class LdapClient(object):
     @property
     def _conn(self):
-        if not hasattr(ldapcache, 'connection'):
-            conn = ipaldap.LDAPClient(
-                ldap_uri=APP.config['LDAP_SERVER'],
-                cacert=APP.config['LDAP_CACERT'],
-            )
-            with private_ccache() as ccache:
-                kinit_keytab(
-                    principal='%s@%s' % (APP.config['KRB5_PRINCIPAL'],
-                                         APP.config['KRB5_REALM']),
-                    keytab=APP.config['KRB5_KEYTAB'],
-                    ccache_name=ccache,
-                )
-                conn.gssapi_bind()
-
-            ldapcache.connection = conn
-        return ldapcache.connection
+        return get_thread_ldap_connection()
 
     def __init__(self, logger, user_token_info, client_info):
         self._user_token_info = user_token_info
@@ -76,7 +80,7 @@ class Shim(object):
 
         This is filtered for both the client and the user. """
         # TODO: Implement
-        return ['uid']
+        return ['uid', 'cn']
 
     @property
     def _attrs_write(self):

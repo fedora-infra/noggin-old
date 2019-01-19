@@ -39,4 +39,5 @@ def ping(log, ldap, name, page, perpage):
 def whoami(log, ldap):
     return {
         'uid': ldap.current_user.uid[0],
+        'cn': ldap.current_user.cn,
     }
