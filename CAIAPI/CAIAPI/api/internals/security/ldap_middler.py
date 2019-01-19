@@ -175,6 +175,5 @@ class UserShim(Shim):
 
 class GroupShim(Shim):
     def __init__(self, logger, client, groupname):
-        # TODO
-        group_dn = "%s,CN=foobar" % groupname
+        group_dn = [('cn', groupname), ('cn', 'groups'), ('cn', 'accounts')]
         super().__init__(logger, client, group_dn, 'group')
