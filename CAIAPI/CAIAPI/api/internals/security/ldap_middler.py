@@ -31,10 +31,22 @@ def get_thread_ldap_connection():
     return ldapcache.connection
 
 
+class LazyLDAPConnection(object):
+    def __init__(self):
+        self._conn = None
+
+    def __getattr__(self, attribute):
+        if self._conn is None:
+            APP.logger.debug("LDAP connection initialized to get %s",
+                             attribute)
+            self._conn = get_thread_ldap_connection()
+        return getattr(self._conn, attribute)
+
+
 class LdapClient(object):
     @property
     def _conn(self):
-        return get_thread_ldap_connection()
+        return LazyLDAPConnection()
 
     def __init__(self, logger, user_token_info, client_info):
         self._user_token_info = user_token_info
