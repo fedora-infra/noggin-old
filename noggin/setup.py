@@ -9,14 +9,10 @@ import pkg_resources
 from setuptools import setup
 
 
-with open(os.path.join(os.path.dirname(__file__), '../VERSION'), 'r') as v:
-    VERSION = v.read().strip()
-
-
 setup(
     name='noggin',
     description='Noggin Account System',
-    version=VERSION,
+    version='0.1',
     author='Ryan Lerch',
     author_email='rlerch@redhat.com',
     maintainer='Ryan Lerch',
