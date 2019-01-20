@@ -3,14 +3,6 @@ from CAIAPI.api import API
 api = API(1)
 
 @api
-@api.register('', 'GET')
-@api.return_code(200, "Hello")
-@api.no_client_auth
-@api.no_user_auth
-def index(ldap):
-    return {"message": "Greetings"}
-
-@api
 @api.register('ping', 'POST')
 @api.return_code(200, "Hello")
 @api.argument('name', 'User name to say hello to')
