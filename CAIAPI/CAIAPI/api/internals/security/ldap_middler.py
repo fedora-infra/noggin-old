@@ -58,8 +58,10 @@ class LazyLDAPConnection(object):
 
 class LdapClient(object):
     @property
-    def _conn(self):
-        return LazyLDAPConnection()
+    def conn(self):
+        if self._conn is None:
+            self._conn = LazyLDAPConnection()
+        return self._conn
 
     def __init__(self, logger, user_token_info, client_info):
         self._user_token_info = user_token_info
@@ -67,6 +69,7 @@ class LdapClient(object):
         self._logger = logger
         self._user_cache = {}
         self._group_cache = {}
+        self._conn = None
 
     @property
     def current_user(self):
@@ -78,7 +81,7 @@ class LdapClient(object):
         if username not in self._user_cache:
             self._user_cache[username] = UserShim(
                 self._logger,
-                self._conn,
+                self,
                 username,
                 username == self._user_token_info['sub']
             )
@@ -88,7 +91,7 @@ class LdapClient(object):
         if groupname not in self._group_cache:
             self._group_cache[groupname] = GroupShim(
                 self._logger,
-                self._conn,
+                self,
                 groupname
             )
         return self._group_cache[groupname]
