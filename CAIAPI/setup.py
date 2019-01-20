@@ -22,6 +22,12 @@ setup(
     url='https://pagure.io/noggin',
     packages=['CAIAPI'],
     include_package_data=True,
-    install_requires=['Flask', 'gunicorn'],
+    install_requires=['Flask',
+                      'flask-oidc',
+                      'gunicorn',
+                      'ldap',
+                      'ipapython',
+                      'ipalib',
+                      'cryptography'],
 )
 
