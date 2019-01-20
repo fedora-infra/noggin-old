@@ -22,6 +22,6 @@ setup(
     url='https://pagure.io/noggin',
     packages=['CAIAPI'],
     include_package_data=True,
-    install_requires=['Flask'],
+    install_requires=['Flask', 'gunicorn'],
 )
 
