@@ -25,7 +25,6 @@ setup(
     install_requires=['Flask',
                       'flask-oidc',
                       'gunicorn',
-                      'ldap',
                       'ipapython',
                       'ipalib',
                       'cryptography'],
