@@ -123,6 +123,10 @@ def generate_viewfunc(final_viewfunc, middlewares):
         headers = {
             "Content-Security-Policy": "default-src: 'none'",
             "Feature-Policy": "",
+            "X-Frame-Options": "DENY",
+            "X-Xss-Protection": "1; mode=block",
+            "X-Content-Type-Options": "nosniff",
+            "Referrer-Policy": "no-referrer",
         }
         for middleware in middlewares:
             new_resp = middleware.manipulate_response(resp, kwargs)
