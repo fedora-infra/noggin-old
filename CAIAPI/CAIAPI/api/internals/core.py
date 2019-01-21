@@ -120,7 +120,10 @@ def generate_viewfunc(final_viewfunc, middlewares):
             res, resp = res
         resp['result'] = res
 
-        headers = {}
+        headers = {
+            "Content-Security-Policy": "default-src: 'none'",
+            "Feature-Policy": "",
+        }
         for middleware in middlewares:
             new_resp = middleware.manipulate_response(resp, kwargs)
             extra_headers = None
