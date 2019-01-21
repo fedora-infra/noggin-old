@@ -1,11 +1,22 @@
 from ipapython import ipaldap
 from ipapython.ipautil import private_ccache
-from ipalib.install.kinit import kinit_keytab
 import threading
 
 from CAIAPI import APP
 
 ldapcache = threading.local()
+
+
+try:
+    from ipalib.install.kinit import kinit_keytab
+except ImportError:
+    import gssapi
+
+    def kinit_keytab(principal, keytab, ccache_name):
+        name = gssapi.Name(principal, gssapi.NameType.kerberos_principal)
+        store = {'ccache': ccache_name,
+                 'client_keytab': keytab}
+        return gssapi.Credentials(name=name, store=store, usage='initiate')
 
 
 def base_dn():
