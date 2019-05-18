@@ -13,6 +13,7 @@ docker-compose \
 	--ds-password noggindev \
 	--admin-password noggindev \
 	--domain noggindev.test \
-	--realm NOGGINDEV.TEST
+	--realm NOGGINDEV.TEST \
+        --allow-zone-overlap
 # Make sure to stop IPA: resuming doesn't quite work
 docker-compose down
