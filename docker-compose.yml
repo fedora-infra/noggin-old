@@ -81,3 +81,11 @@ volumes:
   ipa-data:
   ipsilon-data:
   caiapi-noggin-data:
+networks:
+  default:
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+      - subnet: "172.16.238.0/24"
+      - subnet: "fd26:d971:9f61:c264::/64"
